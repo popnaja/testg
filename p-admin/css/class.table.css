@@ -1,0 +1,208 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Jun 27, 2015, 9:57:24 PM
+    Author     : POP-US-750D
+*/
+
+.tb-hide {
+    display:none;
+}
+.ez-table {
+    width:100%;
+    box-sizing:border-box;
+    padding-left:4px;
+    padding-right:5px;
+}
+.ez-table a[class*='icon']{
+    text-decoration:none;
+    font-size:18px;
+}
+.ez-table a[class*='icon']:hover{
+    color:#f8a682;
+}
+.ez-table table {
+    width:100%;
+    border-collapse:collapse;
+    border:1px #D7D8D7 solid;
+    table-layout:fixed;
+    font-size:13px;
+    margin-left:auto;
+    margin-right:auto;
+    
+}
+.ez-table .td-full {
+    width:100%;
+}
+.ez-table tr:first-child {
+    border-bottom:1px #D7D8D7 solid;
+}
+.ez-table tr:nth-child(even){
+    background-color:#f6f9fc;
+}
+.ez-table tr:nth-child(odd){
+    background-color:#fff;
+}
+.ez-table table th {
+    font-size:12px;
+    font-weight:600;
+    text-align:center;
+}
+.ez-table td,
+.ez-table th{
+    font-size:12px;
+    padding:3px 2px;
+    text-align:center;
+}
+.tb-total {
+    border-top:2px #29abe2 double;
+}
+.page-nav {
+    width:100%;
+    text-align:center;
+    margin-top:15px;
+    margin-bottom:10px;
+}
+.pnav-icon {
+    display:inline-block;
+    width:32px;
+    line-height:30px;
+    padding-top:2px;
+    font-size:25px;
+    color:#1597ce;
+}
+.pnav-icon:hover {
+    text-decoration:none;
+    background-color:#29abe2;
+    color:#fff;
+}
+.pnav-icon.nav-inactive {
+    color:#bbb;
+    cursor:default;
+    pointer-events:none;
+}
+.pnav-icon.nav-inactive:hover {
+    color:#bbb;
+    background-color:#f5f5f5;
+}
+.page-sel {
+    position:relative;
+    top:-5px;
+    font-size:13px;
+    width:80px;
+}
+.tt-page{
+    position:relative;
+    top:-5px;
+    font-size:13px;
+}
+/* option for table */
+#op-wrap {
+    height:0;
+    transition: height linear 0.15s;
+    overflow:hidden;
+}
+.op-tb {
+    position:relative;
+    width:90%;
+    margin-left:auto;
+    margin-right:auto;
+    background-color:#fff;
+    border: 1px solid #ddd;
+    border-top: none;
+    -webkit-box-shadow: 0 1px 0 rgba(0,0,0,.025);
+    box-shadow: 0 1px 0 rgba(0,0,0,.025);
+    padding:7px 20px 15px 20px;
+    box-sizing:border-box;
+    font-size:13px;
+}
+.op-but {
+    display:inline-block;
+    box-sizing:border-box;
+    position:relative;
+    top:0px;
+    float:right;
+    margin-right:5%;
+    width:37px;
+    box-sizing:border-box;
+    background-color:#fff;
+    border: 1px solid #ddd;
+    border-top: none;
+    -webkit-box-shadow: 0 1px 0 rgba(0,0,0,.025);
+    box-shadow: 0 1px 0 rgba(0,0,0,.025);
+    padding:3px 7px 0px 7px;
+    font-size:20px;
+    cursor:pointer;
+    color:#777;
+    z-index:1;
+}
+.op-but:hover {
+    color:#444;
+}
+.op-arr {
+    font-size:15px;
+    line-height:15px;
+    position:relative;
+    top:3px;
+    padding-left:3px;
+}
+#op-tb-check ul li{
+    list-style:none;
+    display:inline-block;
+    float:left;
+    padding-left:7px;
+    padding-bottom:10px;
+    width:33%;
+    box-sizing:border-box;
+}
+#op-tb-check ul li label {
+    padding-left:5px;
+}
+#op-tb-apply {
+    color:rgb(85,85,85);
+    border-color: #ccc;
+    background: #f7f7f7;
+    -webkit-box-shadow: inset 0 1px 0 #fff,0 1px 0 rgba(0,0,0,.08);
+    box-shadow: inset 0 1px 0 #fff,0 1px 0 rgba(0,0,0,.08);
+    padding:3px 7px 3px 7px;
+    font-size:13px;
+    float:right;
+}
+#op-tb-apply:hover {
+    border-color:rgb(50,50,50);
+}
+.tb-n-minus {
+    color:#ff5b42;
+    font-weight:600;
+}
+.tb-n-minus:before {
+    font-family: "ezicon" !important;
+    font-style: normal !important;
+    font-weight: normal !important;
+    font-variant: normal !important;
+    text-transform: none !important;
+    speak: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: "p";
+    position:relative;
+    top:2px;
+}
+@media only screen and (min-width: 420px) {
+    .ez-table table {
+        font-size:14px;
+    }
+    .ez-table th,
+    .ez-table td {
+        font-size:14px;
+    }
+}
+@media only screen and (min-width: 1024px) {
+
+}
+
+/*----------------------------------------------------------------------------- carbon -----------------------------------------------*/

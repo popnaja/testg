@@ -1,0 +1,209 @@
+.full-report {
+    width:100%;
+    border-collapse:collapse;
+    border:1px rgba(0,0,0,.2) solid;
+    table-layout:fixed;
+    font-size:14px;
+    margin-left:auto;
+    margin-right:auto;
+    background-color:#fff;
+    color:rgba(0,0,0,.84);
+}
+.full-report th,
+.full-report td {
+    padding:2px;
+    border:1px rgba(0,0,0,.2) solid;
+    word-wrap:break-word;
+}
+.full-report td {
+    text-align:right;
+}
+.row-color {
+    background-color:#dfeffc;
+}
+.row-hilight {
+    background-color:#c8e6c9;
+}
+
+.icon-remove {
+    color:#ff5b42;
+    cursor: pointer;
+}
+.tb-carbon-head {
+    background-color:#c8e6c9;
+}
+.ez-table .blue-but {
+    max-width:100px;
+}
+.c-report {
+    max-width:8.27in;
+    margin-left:auto;
+    margin-right:auto;
+    padding:25px;
+}
+.c-report>h2{
+    font-size:14pt;
+    margin-bottom:15px;
+    font-weight:600;
+}
+.report-head {
+    border-bottom:#38b0e7 solid 2px;
+    margin-bottom:15px;
+}
+.report-title {
+    width:70%;
+    display:inline-block;
+    vertical-align: top;
+    padding-top:25px;
+    padding-bottom:10px;
+    opacity: 1;
+}
+.report-head h1 {
+    color:#1ca138;
+    margin-bottom:10px;
+    font-size:18pt;
+}
+.report-head h2 {
+    margin-bottom:10px;
+    font-size:14pt;
+}
+.report-logo {
+    width:30%;
+    display:inline-block;
+    text-align:center;
+}
+.report-logo img {
+    width:100%;
+    height:auto;
+    max-width:150px;
+}
+.report-logo h4 {
+    position:relative;
+    top:-30px;
+}
+.error-remark {
+    font-size:20px;
+    color:#ff5b42;
+}
+/*
+.full-report tr th:nth-child(2){
+    min-width:320px;
+    width:30%;
+}
+*/
+.full-report {
+    margin-bottom:30px;
+}
+/*----------------------------------------------------------------- report -----------------------------------------------------*/
+.print-report thead {
+    display:table-header-group;
+}
+.print-report tr,
+.print-report td,
+.print-report th {
+    page-break-inside: avoid;
+}
+.print-report {
+    width:8.27in;
+    margin-left:auto;
+    margin-right:auto;
+}
+.print-report h1 {
+    font-size:15pt;
+}
+.print-report h2,
+.print-report h3,
+.print-report h3{
+    font-size:14pt;
+    color:rgba(0,0,0,.84);
+}
+.print-report .error-remark {
+    font-size:12pt;
+    color:#ff5b42;
+}
+.print-report .full-report {
+    font-size:10pt;
+}
+.print-report .tb-title {
+    padding-bottom:10px;
+    font-size:12pt;
+}
+.print-report .report-logo img {
+    max-width:120px;
+}
+.print-report .report-logo h4 {
+    top:-30px;
+    font-size:12pt;
+}
+
+.report-sum {
+    width:8.27in;
+    height:11.7in;
+    margin-bottom:2in;
+}
+.print-icon {
+    padding-top:25px;
+    padding-left:25px;
+}
+.print-icon .blue-but {
+    display:inline-block;
+    width:100px;
+    font-size:20px;
+    text-decoration:none;
+    color:rgba(0,0,0,.84);
+    text-align:center;
+    margin-right:15px;
+    height:43px;
+    width:98px;
+}
+
+.print-land {
+    width:11.7in;
+    margin-left:auto;
+    margin-right:auto;
+    padding:25px;
+}
+.print-land .full-report tr th:nth-child(2){
+    width:150px;
+}
+.print-land .full-report tr th:nth-child(6),
+.print-land .full-report tr th:nth-child(13),
+.print-land .full-report tr th:nth-child(14),
+.print-land .full-report tr th:nth-child(15){
+    width:80px;
+}
+.print-land .full-report tr th:nth-child(3),
+.print-land .full-report tr th:nth-child(16){
+    width:40px;
+}
+.print-land .full-report tr th:nth-child(5),
+.print-land .full-report tr th:nth-child(8){
+    width:50px;
+}
+
+/*------------------------------------------------------------------ calculate ---------------------------------------------------------*/
+.com-sec {
+    border-bottom:rgba(0,0,0,0.84) solid 1px;
+    margin-bottom:10px;
+}
+.down-but {
+    display:inline-block;
+}
+.down-but input {
+    height:43px;
+    width:98px;
+}
+.load-icon {
+    margin-top:15px;
+    text-align:right;
+}
+.tb-red-bg {
+    background-color:#ff5b42;
+    font-weight:600;
+    color:#fff;
+    text-align:center;
+}
+#tb-history {
+    padding:0;
+}
+/*------------------------------------------------------------------ calculate END------------------------------------------------------*/
