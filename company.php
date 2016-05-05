@@ -14,6 +14,7 @@ $aroot = AROOTS;
 __autoload("menu");
 __autoload("pdo_g");
 $db = new greenDB();
+$redirect = $root.basename(__FILE__);
 $menu = new mymenu("th");
 $menu->__autoloadall("form");
 $menu->__autoloadall("table");
@@ -36,20 +37,30 @@ $cid = filter_input(INPUT_GET,'cid',FILTER_SANITIZE_NUMBER_INT);
 
 if(isset($cid)){
     //load data
-    $info = $db->view_company($cid);
+    $info = $db->view_company($cid)+$db->get_meta("company_meta", "company_id", $cid);
     //edit
     $form = new myform('edit','cheight');
+    $ele_type = $db->get_mat($cid,"7",false);
+    $paper_waste = $db->get_mat($cid,"8",false);
+    $plate_waste = $db->get_mat($cid,"9",false);
+    $waste = "<div class='form-section'>"
+            . "<h4>แหล่งไฟฟ้า, การจัดการกระดาษเสียและแม่พิมพ์</h4>"
+            . $form->show_select("ele_type", $ele_type, "label-3070","ไฟฟ้า",(isset($info['ele_type'])?$info['ele_type']:null))
+            . $form->show_select("paper_waste", $paper_waste, "label-3070","เศษกระดาษ",(isset($info['paper_waste'])?$info['paper_waste']:null))
+            . $form->show_select("plate_waste", $plate_waste, "label-3070","แม่พิมพ์ใช้แล้ว",(isset($info['plate_waste'])?$info['plate_waste']:null))
+            . "</div><!-- .form-section -->";
     $content .= "<h1 class='page-title'>Edit Company</h1>"
             . "<div id='ez-msg'>".  showmsg() ."</div>"
             . $form->show_st_form()
             . "<div class='col-100'>"
             . $form->show_text("name","name",$info['name'],"","Name","","label-inline")
             . $form->show_text("email","email",$info['email'],"","Email","","label-inline")
-            . $form->show_text("tel","tel",$info['tel'],"Telephone","","","label-inline")
+            . $form->show_text("tel","tel",$info['tel'],"","Tel","","label-inline")
+            . $waste
             . $form->show_submit("submit","Update","but-right")
             . $form->show_hidden("request","request","edit_company")
             . $form->show_hidden("cid","cid",$cid)
-            . $form->show_hidden("redirect","redirect",$root."company.php?cid=$cid")
+            . $form->show_hidden("redirect","redirect",$redirect)
             . "</div><!-- .col-100 -->";
     $form->addformvalidate("ez-msg", ['name','email','tel'],null,'email');
     $content .= $form->submitscript("$('#edit').submit();");

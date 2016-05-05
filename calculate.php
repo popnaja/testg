@@ -75,6 +75,7 @@ $action = filter_input(INPUT_GET,'action',FILTER_SANITIZE_STRING);
 $fid = filter_input(INPUT_GET,'fid',FILTER_SANITIZE_NUMBER_INT);
 
 if($action == "res"&&$db->check_fn($fid,$coid)){
+/* =========================================================================== ADD ======================================================*/
     $finfo = $db->view_finfo($fid);
     $fnmeta = $db->view_fn_meta($fid);
     $unit = $type_to_unit[$finfo['type']];
@@ -164,6 +165,7 @@ if($action == "res"&&$db->check_fn($fid,$coid)){
                 . "</div><!-- .form-section -->";
     
     //waste management
+    $cmeta = $db->get_meta("company_meta", "company_id", $coid);
     if($coid=="1"){
         $company = array(
             "Good Head Printing & Packaging Group" => "GHPP",
@@ -173,6 +175,10 @@ if($action == "res"&&$db->check_fn($fid,$coid)){
             . $form->show_hidden("paper_waste","paper_waste",36)
             . $form->show_hidden("plate_waste","plate_waste",38);
         $content .= $form->show_select("sub_comp", $company, "label-3070","ผลิคโดย");
+    } else if(isset($cmeta['ele_type'])){
+        $content .= $form->show_hidden("ele_type","ele_type",$cmeta['ele_type'])
+            . $form->show_hidden("paper_waste","paper_waste",$cmeta['paper_waste'])
+            . $form->show_hidden("plate_waste","plate_waste",$cmeta['plate_waste']);
     } else {
         $ele_type = $db->get_mat($coid,"7",false);
         $paper_waste = $db->get_mat($coid,"8",false);
@@ -232,27 +238,27 @@ if($action == "res"&&$db->check_fn($fid,$coid)){
         for($i=0;$i<2;$i++){
             $n++;
             $content .="<div class='print-comp left-50'>"
-                    . $form->show_text("name_$n","name[]","","","ส่วน $n","","label-3070")
-                    . $form->show_select("pid_$n", $print, "label-3070","การพิมพ์",null,"","pid[]")
+                    . $form->show_text("name_$n","name[]","","","ส่วน $n","","label-inline")
+                    . $form->show_select("pid_$n", $print, "label-inline","การพิมพ์",null,"","pid[]")
                     . "<div class='form-section'>"
                     . "<h4>กระดาษ</h4>"
-                    . $form->show_select("paper_$n", $paper, "label-3070","ชนิดกระดาษ",null,"","paper[]")
-                    . $form->show_num("weight_$n","",0.01,"","แกรม","","label-3070","min=1","weight[]")
-                    . $form->show_num("m_width_$n",24,0.01,"","กว้าง(นิ้ว)","","label-3070","min=1","m_width[]")
-                    . $form->show_num("m_length_$n",35,0.01,"","ยาว(นิ้ว)","","label-3070","min=1","m_length[]")
-                    . $form->show_num("sheet_per_plate_$n","",1,"","หน้าต่อกรอบ","ปกคิดหน้ากาง","label-3070","min=1","sheet_per_plate[]")
+                    . $form->show_select("paper_$n", $paper, "label-inline","ชนิดกระดาษ",null,"","paper[]")
+                    . $form->show_num("weight_$n","",0.01,"","แกรม","","label-inline","min=1","weight[]")
+                    . $form->show_num("m_width_$n",24,0.01,"","กว้าง(นิ้ว)","","label-inline","min=1","m_width[]")
+                    . $form->show_num("m_length_$n",35,0.01,"","ยาว(นิ้ว)","","label-inline","min=1","m_length[]")
+                    . $form->show_num("sheet_per_plate_$n","",1,"","หน้าต่อกรอบ","ปกคิดหน้ากาง","label-inline","min=1","sheet_per_plate[]")
                     . "</div><!-- .form-section -->"
                     . "<div class='form-section'>"
                     . "<h4>ขนาดชิ้นงาน</h4>"
-                    . $form->show_num("width_$n","",0.01,"","กว้าง(นิ้ว)","","label-3070","min=1","width[]")
-                    . $form->show_num("length_$n","",0.01,"","ยาว(นิ้ว)","ขนาดปกเป็นขนาดกางออกรวมสันและปีก","label-3070","min=1","length[]")
+                    . $form->show_num("width_$n","",0.01,"","กว้าง(นิ้ว)","","label-inline","min=1","width[]")
+                    . $form->show_num("length_$n","",0.01,"","ยาว(นิ้ว)","ขนาดปกเป็นขนาดกางออกรวมสันและปีก","label-inline","min=1","length[]")
                     . $form->show_num("sheet_per_unit_$n","",1,"","แผ่นต่อเล่ม","จำนวณแผ่นชิ้นงานต่อหนังสือ 1 เล่ม = (หน้า/2)","label-inline","min=1","sheet_per_unit[]")
                     . "</div><!-- .form-section -->"
                     . "<div class='form-section'>"
                     . "<h4>ปริมาณวัสดุ</h4>"
                     . $form->show_num("input_$n","",1,"","ปริมาณกระดาษ(แผ่น)","","label-inline","min=1","input[]")
-                    . $form->show_select("plate_type_$n", $plate, "label-3070","แม่พิมพ์",null,"","plate_type[]")
-                    . $form->show_num("plate_$n","",0.01,"","แม่พิมพ์(กก)","","label-3070","","plate[]")
+                    . $form->show_select("plate_type_$n", $plate, "label-inline","แม่พิมพ์",null,"","plate_type[]")
+                    . $form->show_num("plate_$n","",0.01,"","แม่พิมพ์(กก)","","label-inline","","plate[]")
                     . "</div><!-- .form-section -->"
                     . "</div><!-- .left-50 -->";
         }    
@@ -274,6 +280,7 @@ if($action == "res"&&$db->check_fn($fid,$coid)){
     $content .= $form->submitscript("$('#new').submit();")
             ."<script>auto_cal();</script>";
 } else if(isset($fid)&&$db->check_fn($fid,$coid)){
+/* =========================================================================== EDIT ======================================================*/
     $machs = $db->get_amach($coid);
     $paper = array("0"=>"-- กระดาษ --")+$db->get_mat($coid,"1",false);
     $plate = $db->get_mat($coid,"5",false);
@@ -307,6 +314,7 @@ if($action == "res"&&$db->check_fn($fid,$coid)){
                 . "</div><!-- .form-section -->";
     
     //waste management
+    $cmeta = $db->get_meta("company_meta", "company_id", $coid);
     if($coid=="1"){
         $company = array(
             "Good Head Printing & Packaging Group" => "GHPP",
@@ -316,6 +324,10 @@ if($action == "res"&&$db->check_fn($fid,$coid)){
             . $form->show_hidden("paper_waste","paper_waste",36)
             . $form->show_hidden("plate_waste","plate_waste",38);
         $content .= $form->show_select("sub_comp", $company, "label-3070","ผลิคโดย",$fnmeta['sub_comp']);
+    } else if(isset($cmeta['ele_type'])){
+        $content .= $form->show_hidden("ele_type","ele_type",$cmeta['ele_type'])
+            . $form->show_hidden("paper_waste","paper_waste",$cmeta['paper_waste'])
+            . $form->show_hidden("plate_waste","plate_waste",$cmeta['plate_waste']);
     } else {
         $ele_type = $db->get_mat($coid,"7",false);
         $paper_waste = $db->get_mat($coid,"8",false);
@@ -397,20 +409,20 @@ if($action == "res"&&$db->check_fn($fid,$coid)){
             $n++;
             if(isset($pinfo[$i])){
                 $content .="<div class='left-50'>"
-                    . $form->show_text("name_$n","name[]",$pinfo[$i]['name'],"","ส่วน $n","","label-3070")
-                    . $form->show_select("pid_$n", $print, "label-3070","การพิมพ์",$pinfo[$i]['process_id'],"","pid[]")
+                    . $form->show_text("name_$n","name[]",$pinfo[$i]['name'],"","ส่วน $n","","label-inline")
+                    . $form->show_select("pid_$n", $print, "label-inline","การพิมพ์",$pinfo[$i]['process_id'],"","pid[]")
                     . "<div class='form-section'>"
                     . "<h4>กระดาษ</h4>"
-                    . $form->show_select("paper_$n", $paper, "label-3070","ชนิดกระดาษ",$pinfo[$i]['paper_type'],"","paper[]")
-                    . $form->show_num("weight_$n",$pinfo[$i]['weight'],0.01,"","แกรม","","label-3070","min=1","weight[]")
-                    . $form->show_num("m_width_$n",$pinfo[$i]['m_width'],0.01,"","กว้าง(นิ้ว)","","label-3070","min=1","m_width[]")
-                    . $form->show_num("m_length_$n",$pinfo[$i]['m_length'],0.01,"","ยาว(นิ้ว)","","label-3070","min=1","m_length[]")
+                    . $form->show_select("paper_$n", $paper, "label-inline","ชนิดกระดาษ",$pinfo[$i]['paper_type'],"","paper[]")
+                    . $form->show_num("weight_$n",$pinfo[$i]['weight'],0.01,"","แกรม","","label-inline","min=1","weight[]")
+                    . $form->show_num("m_width_$n",$pinfo[$i]['m_width'],0.01,"","กว้าง(นิ้ว)","","label-inline","min=1","m_width[]")
+                    . $form->show_num("m_length_$n",$pinfo[$i]['m_length'],0.01,"","ยาว(นิ้ว)","","label-inline","min=1","m_length[]")
                     . $form->show_num("sheet_per_plate_$n",$pinfo[$i]['sheet_per_plate'],1,"","หน้าต่อกรอบ","ปกคิดหน้ากาง","label-inline","min=1","sheet_per_plate[]")
                     . "</div><!-- .form-section -->"
                     . "<div class='form-section'>"
                     . "<h4>ขนาดชิ้นงาน</h4>"
-                    . $form->show_num("width_$n",$pinfo[$i]['width'],0.01,"","กว้าง(นิ้ว)","","label-3070","min=1","width[]")
-                    . $form->show_num("length_$n",$pinfo[$i]['length'],0.01,"","ยาว(นิ้ว)","","label-3070","min=1","length[]")
+                    . $form->show_num("width_$n",$pinfo[$i]['width'],0.01,"","กว้าง(นิ้ว)","","label-inline","min=1","width[]")
+                    . $form->show_num("length_$n",$pinfo[$i]['length'],0.01,"","ยาว(นิ้ว)","","label-inline","min=1","length[]")
                     . $form->show_num("sheet_per_unit_$n",$pinfo[$i]['sheet_per_unit'],0.1,"","แผ่นต่อเล่ม","จำนวณแผ่นชิ้นงานต่อหนังสือ 1 เล่ม = (หน้า/2)","label-inline","min=1","sheet_per_unit[]")
                     . "</div><!-- .form-section -->"
                     . "<div class='form-section'>"
@@ -422,20 +434,20 @@ if($action == "res"&&$db->check_fn($fid,$coid)){
                     . "</div><!-- .left-50 -->";
             } else {
                 $content .="<div class='left-50'>"
-                    . $form->show_text("name_$n","name[]","","","ส่วน $n","","label-3070")
-                    . $form->show_select("pid_$n", $print, "label-3070","การพิมพ์",null,"","pid[]")
+                    . $form->show_text("name_$n","name[]","","","ส่วน $n","","label-inline")
+                    . $form->show_select("pid_$n", $print, "label-inline","การพิมพ์",null,"","pid[]")
                     . "<div class='form-section'>"
                     . "<h4>กระดาษ</h4>"
-                    . $form->show_select("paper_$n", $paper, "label-3070","ชนิดกระดาษ",null,"","paper[]")
-                    . $form->show_num("weight_$n","",0.01,"","แกรม","","label-3070","min=1","weight[]")
-                    . $form->show_num("m_width_$n",24,0.01,"","กว้าง(นิ้ว)","","label-3070","min=1","m_width[]")
-                    . $form->show_num("m_length_$n",35,0.01,"","ยาว(นิ้ว)","","label-3070","min=1","m_length[]")
+                    . $form->show_select("paper_$n", $paper, "label-inline","ชนิดกระดาษ",null,"","paper[]")
+                    . $form->show_num("weight_$n","",0.01,"","แกรม","","label-inline","min=1","weight[]")
+                    . $form->show_num("m_width_$n",24,0.01,"","กว้าง(นิ้ว)","","label-inline","min=1","m_width[]")
+                    . $form->show_num("m_length_$n",35,0.01,"","ยาว(นิ้ว)","","label-inline","min=1","m_length[]")
                     . $form->show_num("sheet_per_plate_$n","",1,"","หน้าต่อกรอบ","ปกคิดหน้ากาง","label-inline","min=1","sheet_per_plate[]")
                     . "</div><!-- .form-section -->"
                     . "<div class='form-section'>"
                     . "<h4>ขนาดชิ้นงาน</h4>"
-                    . $form->show_num("width_$n","",0.01,"","กว้าง(นิ้ว)","","label-3070","min=1","width[]")
-                    . $form->show_num("length_$n","",0.01,"","ยาว(นิ้ว)","","label-3070","min=1","length[]")
+                    . $form->show_num("width_$n","",0.01,"","กว้าง(นิ้ว)","","label-inline","min=1","width[]")
+                    . $form->show_num("length_$n","",0.01,"","ยาว(นิ้ว)","","label-inline","min=1","length[]")
                     . $form->show_num("sheet_per_unit_$n","",1,"","แผ่นต่อเล่ม","จำนวณแผ่นชิ้นงานต่อหนังสือ 1 เล่ม = (หน้า/2)","label-inline","min=1","sheet_per_unit[]")
                     . "</div><!-- .form-section -->"
                     . "<div class='form-section'>"

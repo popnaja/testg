@@ -1,8 +1,8 @@
 <?php
-class greenDB{
-    private $conn;
+__autoload("pdo");
+class greenDB extends myDB{
     public function __construct() {
-        $this->conn = dbConnect(DB_GREEN);
+        parent::__construct();
     }
     public function add_transport($name,$max,$ref){
         try {
@@ -13,7 +13,7 @@ class greenDB{
             $stmt->execute();
             return $this->conn->lastInsertId();
         } catch (Exception $ex) {
-            db_error("add_transport", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function edit_transport($id,$name,$max,$ref){
@@ -26,7 +26,7 @@ class greenDB{
             $stmt->execute();
             return ($stmt->rowCount()>0?true:false);
         } catch (Exception $ex) {
-            db_error("edit_transport", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function check_transport_name($name,$tid=0){
@@ -37,7 +37,7 @@ class greenDB{
             $stmt->execute();
             return ($stmt->rowCount()>0?false:true);
         } catch (Exception $ex) {
-            db_error("check_transport_name", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function add_transport_load($tid,$arrloadef){
@@ -52,7 +52,7 @@ class greenDB{
                 $stmt->execute();
             }
         } catch (Exception $ex) {
-            db_error("add_transport_load", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function edit_tload($arr){
@@ -68,7 +68,7 @@ class greenDB{
                 $stmt->execute();
             }
         } catch (Exception $ex) {
-            db_error("edit_tload", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function view_transport($tid = null){
@@ -87,7 +87,7 @@ END_OF_TEXT;
             $stmt->execute();
             return (isset($tid)?$stmt->fetch(PDO::FETCH_ASSOC):$stmt->fetchAll(PDO::FETCH_ASSOC));
         } catch (Exception $ex) {
-            db_error("view_transport", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function get_transport_ef($tid){
@@ -97,7 +97,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
         } catch (Exception $ex) {
-            db_error("get_transport_ef", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function view_load($tid){
@@ -107,7 +107,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $ex) {
-            db_error("view_load", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function check_machinecat_name($name,$cid=0){
@@ -118,7 +118,7 @@ END_OF_TEXT;
             $stmt->execute();
             return ($stmt->rowCount()>0?false:true);
         } catch (Exception $ex) {
-            db_error("check_machinecat_name", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function add_machine_cat($name,$group,$des){
@@ -130,7 +130,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $this->conn->lastInsertId();
         } catch (Exception $ex) {
-            db_error("add_machine_cat", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function edit_machine_cat($cid,$name,$group,$des){
@@ -143,7 +143,7 @@ END_OF_TEXT;
             $stmt->execute();
             return ($stmt->rowCount()>0?true:false);
         } catch (Exception $ex) {
-            db_error("edit_machine_cat", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function check_cat_name($name,$cid=0){
@@ -154,7 +154,7 @@ END_OF_TEXT;
             $stmt->execute();
             return ($stmt->rowCount()>0?false:true);
         } catch (Exception $ex) {
-            db_error("check_cat_name", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function add_cat($name,$des){
@@ -165,7 +165,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $this->conn->lastInsertId();
         } catch (Exception $ex) {
-            db_error("add_cat", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function edit_cat($cid,$name,$des){
@@ -177,7 +177,7 @@ END_OF_TEXT;
             $stmt->execute();
             return ($stmt->rowCount()>0?true:false);
         } catch (Exception $ex) {
-            db_error("edit_cat", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function view_cat($cid=null){
@@ -227,7 +227,7 @@ END_OF_TEXT;
             $stmt->execute();
             return ($stmt->rowCount()>0?false:true);
         } catch (Exception $ex) {
-            db_error("check_mat_name", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function view_mat($cat=0,$coid){
@@ -259,7 +259,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (Exception $ex) {
-            db_error("view_matinfo", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function add_mat($coid,$name,$unit,$ef,$ref,$cat){
@@ -274,7 +274,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $this->conn->lastInsertId();
         } catch (Exception $ex) {
-            db_error("add_mat", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function edit_mat($mid,$name,$unit,$ef,$ref,$cat){
@@ -289,7 +289,7 @@ END_OF_TEXT;
             $stmt->execute();
             return ($stmt->rowCount()>0?true:false);
         } catch (Exception $ex) {
-            db_error("add_mat", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function view_user($cid=null,$page=null,$perpage=null){
@@ -334,7 +334,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (Exception $ex) {
-            db_error("view_uinfo", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function view_umeta($uid){
@@ -344,7 +344,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
         } catch (Exception $ex) {
-            db_error("view_umeta", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function check_company_name($name,$cid=0){
@@ -355,7 +355,7 @@ END_OF_TEXT;
             $stmt->execute();
             return ($stmt->rowCount()>0?false:true);
         } catch (Exception $ex) {
-            db_error("check_company_name", $ex);
+            db_error(__METHOD__, $ex);
         }   
     }
     public function add_company($name,$email,$tel,$date){
@@ -368,7 +368,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $this->conn->lastInsertId();
         } catch (Exception $ex) {
-            db_error("add_company", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function edit_company($cid,$arrinfo){
@@ -381,7 +381,7 @@ END_OF_TEXT;
             }
             $stmt->execute();
         } catch (Exception $ex) {
-            db_error("edit_company", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function view_company($cid=null){
@@ -401,7 +401,7 @@ END_OF_TEXT;
             $stmt->execute();
             return (isset($cid)?$stmt->fetch(PDO::FETCH_ASSOC):$stmt->fetchAll(PDO::FETCH_ASSOC));
         } catch (Exception $ex) {
-            db_error("view_company", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function sel_company(){
@@ -410,7 +410,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
         } catch (Exception $ex) {
-            db_error("sel_company", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function check_email($email,$uid=0){
@@ -421,7 +421,7 @@ END_OF_TEXT;
             $stmt->execute();
             return ($stmt->rowCount()>0?false:true);
         } catch (Exception $ex) {
-            db_error("check_email", $ex);
+            db_error(__METHOD__, $ex);
         }   
     }
     public function add_user($email,$pass,$date){
@@ -433,7 +433,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $this->conn->lastInsertId();
         } catch (Exception $ex) {
-            db_error("add_user", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function update_user_meta($uid,$meta){
@@ -460,7 +460,7 @@ END_OF_TEXT;
                 }
             }
         } catch (Exception $ex) {
-            db_error("update_user_meta", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function edit_user($uid,$arrinfo){
@@ -473,7 +473,7 @@ END_OF_TEXT;
             }
             $stmt->execute();
         } catch (Exception $ex) {
-            db_error("edit_user", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function get_repass($email){
@@ -498,7 +498,7 @@ END_OF_TEXT;
                 return false;
             }
         } catch (Exception $ex) {
-            db_error("get_repass", $ex);
+            db_error(__METHOD__, $ex);
             return false;
         }
     }
@@ -529,7 +529,7 @@ END_OF_TEXT;
                return false;
            }
         } catch (Exception $ex) {
-           db_error("checkr", $ex);
+           db_error(__METHOD__, $ex);
            return false;
        }
    }
@@ -546,7 +546,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $ex) {
-            db_error("view_mat_transport", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function get_mat($coid,$cat,$wunit=true){
@@ -557,7 +557,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
         } catch (Exception $ex) {
-            db_error("get_mat", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function get_mat_fort($cat){
@@ -566,7 +566,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
         } catch (Exception $ex) {
-            db_error("get_mat", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function get_vehicle(){
@@ -575,7 +575,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
         } catch (Exception $ex) {
-            db_error("get_vehicle", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function add_mat_gas($mid,$type,$gas,$used){
@@ -587,7 +587,7 @@ END_OF_TEXT;
             $stmt->bindParam(":used",$used);
             $stmt->execute();
         } catch (Exception $ex) {
-            db_error("add_mat_gas", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function edit_mat_gas($mid,$type,$gas,$used){
@@ -599,7 +599,7 @@ END_OF_TEXT;
             $stmt->bindParam(":used",$used);
             $stmt->execute();
         } catch (Exception $ex) {
-            db_error("edit_mat_gas", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function add_mat_vehicle($mid,$type,$dis,$tid,$in,$out){
@@ -613,7 +613,7 @@ END_OF_TEXT;
             $stmt->bindParam(":back",$out);
             $stmt->execute();
         } catch (Exception $ex) {
-            db_error("add_mat_vehicle", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function edit_mat_vehicle($mid,$type,$dis,$tid,$in,$out){
@@ -627,7 +627,7 @@ END_OF_TEXT;
             $stmt->bindParam(":back",$out);
             $stmt->execute();
         } catch (Exception $ex) {
-            db_error("add_mat_vehicle", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function view_mtinfo($mid){
@@ -637,7 +637,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (Exception $ex) {
-            db_error("view_mtinfo", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function view_machine($coid,$exid=null){
@@ -663,7 +663,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $ex) {
-            db_error("view_machine", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function view_design($coid,$mcat){
@@ -684,7 +684,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $ex) {
-            db_error("view_design", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function add_machine($coid,$brand,$process,$unit,$cat){
@@ -698,7 +698,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $this->conn->lastInsertId();
         } catch (Exception $ex) {
-            db_error("add_machine", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function edit_machine($maid,$brand,$process,$unit,$cat){
@@ -712,7 +712,7 @@ END_OF_TEXT;
             $stmt->execute();
             return ($stmt->rowCount()>0?true:false);
         } catch (Exception $ex) {
-            db_error("edit_machine", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function update_mmeta($maid,$meta){
@@ -739,7 +739,7 @@ END_OF_TEXT;
                 }
             }
         } catch (Exception $ex) {
-            db_error("update_mmeta", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function add_ele($maid,$aname,$awatt,$anum){
@@ -761,7 +761,7 @@ END_OF_TEXT;
                 }
             }
         } catch (Exception $ex) {
-            db_error("add_ele", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function edit_ele($aeid,$aname,$awatt,$anum){
@@ -780,7 +780,7 @@ END_OF_TEXT;
                 $stmt->execute();
             }
         } catch (Exception $ex) {
-            db_error("edit_ele", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function view_ele($maid){
@@ -790,7 +790,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $ex) {
-            db_error("view_ele", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function view_macinfo($maid){
@@ -806,7 +806,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
         } catch (Exception $ex) {
-            db_error("view_mmeta", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function get_mcat($group=null){
@@ -843,7 +843,7 @@ END_OF_TEXT;
             }
             return $res;
         } catch (Exception $ex) {
-            db_error("get_amach", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function get_machine_aunit(){
@@ -866,7 +866,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $this->conn->lastInsertId();
         } catch (Exception $ex) {
-            db_error("add_testdata", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function edit_testdata($testid,$arrinfo){
@@ -879,7 +879,7 @@ END_OF_TEXT;
             }
             $stmt->execute();
         } catch (Exception $ex) {
-            db_error("edit_testdata", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function add_test_mat($testid,$amat,$anum,$input=true){
@@ -898,7 +898,7 @@ END_OF_TEXT;
                 }
             }
         } catch (Exception $ex) {
-            db_error("add_test_mat", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function edit_test_mat($testid,$amat,$anum,$input=true){
@@ -909,7 +909,7 @@ END_OF_TEXT;
             $stmt->execute();
             $this->add_test_mat($testid, $amat, $anum, $input);
         } catch (Exception $ex) {
-            db_error("edit_test_mat", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function view_machine_test(){
@@ -940,7 +940,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (Exception $ex) {
-            db_error("view_testinfo", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function view_test_mat($testid,$input=true){
@@ -951,7 +951,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $ex) {
-            db_error("view_test_mat", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function view_fn($coid,$month=0,$type=0,$comp=0,$search){
@@ -996,7 +996,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $ex) {
-            db_error("view_fn", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function view_fn_meta($fid){
@@ -1006,7 +1006,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
         } catch (Exception $ex) {
-            db_error("view_fn_meta", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function view_fn_csv($coid,$month=0){
@@ -1034,7 +1034,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_NUM);
         } catch (Exception $ex) {
-            db_error("view_fn", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function get_fn_month($coid){
@@ -1051,7 +1051,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
         } catch (Exception $ex) {
-            db_error("get_fn_month", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function get_fn_type($coid){
@@ -1068,7 +1068,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_COLUMN,0);
         } catch (Exception $ex) {
-            db_error("get_fn_type", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function view_finfo($fid){
@@ -1082,7 +1082,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (Exception $ex) {
-            db_error("view_finfo", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function view_fn_print($fid){
@@ -1095,7 +1095,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $ex) {
-            db_error("view_fn_print", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function add_fn($coid,$name,$type,$amount,$page){
@@ -1111,7 +1111,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $this->conn->lastInsertId();
         } catch (Exception $ex) {
-            db_error("add_fn", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function edit_fn($fid,$arrinfo){
@@ -1124,7 +1124,7 @@ END_OF_TEXT;
             }
             $stmt->execute();
         } catch (Exception $ex) {
-            db_error("edit_fn", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function update_fn_meta($fid,$meta){
@@ -1151,7 +1151,7 @@ END_OF_TEXT;
                 }
             }
         } catch (Exception $ex) {
-            db_error("update_fn_meta", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function add_print($coid,$name){
@@ -1162,7 +1162,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $this->conn->lastInsertId();
         } catch (Exception $ex) {
-            db_error("add_print", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function add_process($pid,$amaid,$aseq,$amult,$atransit){
@@ -1182,7 +1182,7 @@ END_OF_TEXT;
                 $stmt->execute();
             }
         } catch (Exception $ex) {
-            db_error("add_process", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function edit_process($pid,$amaid,$aseq,$amult,$atransit){
@@ -1192,7 +1192,7 @@ END_OF_TEXT;
             $stmt->execute();
             $this->add_process($pid,$amaid,$aseq,$amult,$atransit);
         } catch (Exception $ex) {
-            db_error("edit_process", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function edit_print($pid,$arrinfo){
@@ -1205,7 +1205,7 @@ END_OF_TEXT;
             }
             $stmt->execute();
         } catch (Exception $ex) {
-            db_error("edit_print", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function view_comp($coid){
@@ -1269,7 +1269,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
         } catch (Exception $ex) {
-            db_error("get_print", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function del_fn_print_meta($fpid){
@@ -1278,7 +1278,7 @@ END_OF_TEXT;
             $stmt->bindParam(":fpid",$fpid);
             $stmt->execute();
         } catch (Exception $ex) {
-            db_error("del_fn_print_meta", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function add_fn_print($fid,$apid,$aname,$apaper,$aweight,$am_width,$am_length,$aspp,$awidth,$alength,$asheet,$ainput,$apt,$aplate){
@@ -1318,7 +1318,7 @@ END_OF_TEXT;
                 }
             }
         } catch (Exception $ex) {
-            db_error("add_fn_print", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function edit_fn_print($fid,$apid,$aname,$apaper,$aweight,$am_width,$am_length,$aspp,$awidth,$alength,$asheet,$ainput,$apt,$aplate){
@@ -1328,7 +1328,7 @@ END_OF_TEXT;
             $stmt->execute();
             $this->add_fn_print($fid,$apid,$aname,$apaper,$aweight,$am_width,$am_length,$aspp,$awidth,$alength,$asheet,$ainput,$apt,$aplate);
         } catch (Exception $ex) {
-            db_error("edit_fn_print", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function add_finish($fid,$amach,$aseq,$atran){
@@ -1346,7 +1346,7 @@ END_OF_TEXT;
                 $stmt->execute();
             }
         } catch (Exception $ex) {
-            db_error("add_finish", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function edit_finish($fid,$amach,$aseq,$atran){
@@ -1356,7 +1356,7 @@ END_OF_TEXT;
             $stmt->execute();
             $this->add_finish($fid, $amach, $aseq,$atran);
         } catch (Exception $ex) {
-            db_error("edit_finish", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function view_fin_process($fid){
@@ -1366,7 +1366,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
         } catch (Exception $ex) {
-            db_error("edit_finish", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     
@@ -1377,7 +1377,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_NUM)[0]*$hour/1000;
         } catch (Exception $ex) {
-            db_error("mach_ele", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function view_ef($tdid,$ratio,$input=true){
@@ -1395,7 +1395,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $ex) {
-            db_error("view_ef", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function get_ef($mid,$amount){
@@ -1420,7 +1420,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (Exception $ex) {
-            db_error("get_ef", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function get_print_mach($pid){
@@ -1440,7 +1440,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $ex) {
-            db_error("get_print_mach", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function view_testdata($maid){
@@ -1451,7 +1451,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (Exception $ex) {
-            db_error("view_td", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function get_carbon($fid){
@@ -1467,7 +1467,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $ex) {
-            db_error("view_td", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function get_comp($fid){
@@ -1480,7 +1480,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_NUM)[0];
         } catch (Exception $ex) {
-            db_error("get_comp", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function get_comp_detail($fid){
@@ -1502,7 +1502,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $ex) {
-            db_error("get_comp_detail", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function get_finishing($fid){
@@ -1522,7 +1522,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $ex) {
-            db_error("get_finishing", $ex);
+            db_error(__METHOD__, $ex);
         }   
     }
     public function check_mat($mid,$coid){
@@ -1593,7 +1593,7 @@ END_OF_TEXT;
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_ASSOC)['id'];
         } catch (Exception $ex) {
-            db_error("get_finishing", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function copy_fn($fid,$nfid){
@@ -1617,7 +1617,7 @@ END_OF_TEXT;
             $stmt = $this->conn->prepare($sql);
             $stmt->execute();
         } catch (Exception $ex) {
-            db_error("copy_fn", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
     public function get_lastmonth($coid){
@@ -1631,7 +1631,7 @@ END_OF_TEXT;
                 return 0;
             }
         } catch (Exception $ex) {
-            db_error("get_lastmonth", $ex);
+            db_error(__METHOD__, $ex);
         }
     }
 }

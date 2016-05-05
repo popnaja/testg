@@ -96,7 +96,14 @@ if($req == "add_msg"){
             "tel" => $_POST['tel']
         );
         $db->edit_company($_POST['cid'],$arrdata);
-
+        
+        //update meta
+        $meta = array(
+            "ele_type" => $_POST['ele_type'],
+            "paper_waste" => $_POST['paper_waste'],
+            "plate_waste" => $_POST['plate_waste']
+        );
+        $db->update_meta("company_meta", "company_id", $_POST['cid'], $meta);
         $_SESSION['message'] = "แก้ไข Company สำเร็จ";
         header("location:".$_POST['redirect']);
     }

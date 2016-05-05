@@ -186,6 +186,9 @@
     border-bottom:rgba(0,0,0,0.84) solid 1px;
     margin-bottom:10px;
 }
+.col-50.com-sec {
+    padding-right:0;
+}
 .down-but {
     display:inline-block;
 }
