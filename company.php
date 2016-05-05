@@ -40,6 +40,7 @@ if(isset($cid)){
     $info = $db->view_company($cid)+$db->get_meta("company_meta", "company_id", $cid);
     //edit
     $form = new myform('edit','cheight');
+    $plate = $db->get_mat($cid,"5",false);
     $ele_type = $db->get_mat($cid,"7",false);
     $paper_waste = $db->get_mat($cid,"8",false);
     $plate_waste = $db->get_mat($cid,"9",false);
@@ -48,6 +49,7 @@ if(isset($cid)){
             . $form->show_select("ele_type", $ele_type, "label-3070","ไฟฟ้า",(isset($info['ele_type'])?$info['ele_type']:null))
             . $form->show_select("paper_waste", $paper_waste, "label-3070","เศษกระดาษ",(isset($info['paper_waste'])?$info['paper_waste']:null))
             . $form->show_select("plate_waste", $plate_waste, "label-3070","แม่พิมพ์ใช้แล้ว",(isset($info['plate_waste'])?$info['plate_waste']:null))
+            . $form->show_select("plate_type", $plate, "label-3070","ชนิดแม่พิมพ์",(isset($info['plate_type'])?$info['plate_type']:null))
             . "</div><!-- .form-section -->";
     $content .= "<h1 class='page-title'>Edit Company</h1>"
             . "<div id='ez-msg'>".  showmsg() ."</div>"

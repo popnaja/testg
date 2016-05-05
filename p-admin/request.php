@@ -101,7 +101,8 @@ if($req == "add_msg"){
         $meta = array(
             "ele_type" => $_POST['ele_type'],
             "paper_waste" => $_POST['paper_waste'],
-            "plate_waste" => $_POST['plate_waste']
+            "plate_waste" => $_POST['plate_waste'],
+            "plate_type" => $_POST['plate_type']
         );
         $db->update_meta("company_meta", "company_id", $_POST['cid'], $meta);
         $_SESSION['message'] = "แก้ไข Company สำเร็จ";
