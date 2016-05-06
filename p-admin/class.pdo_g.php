@@ -656,7 +656,7 @@ END_OF_TEXT;
                     FROM machine
                     LEFT JOIN test_data AS td ON td.machine_id=machine.id
                     WHERE company_id=:coid $exsql
-                    ORDER BY machine_cat_id ASC
+                    ORDER BY machine_cat_id ASC, brand_model ASC
 END_OF_TEXT;
             $stmt = $this->conn->prepare($sql);
             $stmt->bindParam(":coid",$coid);
