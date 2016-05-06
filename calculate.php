@@ -388,7 +388,7 @@ if($action == "res"&&$db->check_fn($fid,$coid)){
                     . "<div class='form-section'>"
                     . "<h4>ขนาดชิ้นงาน</h4>"
                     . $form->show_num("width_$n","",0.01,"","กว้าง(นิ้ว)","","label-inline","min=1","width[]")
-                    . $form->show_num("length_$n","",0.01,"","ยาว(นิ้ว)","ขนาดปกเป็นขนาดกางออกรวมสันและปีก","label-inline","min=1","length[]")
+                    . $form->show_num("length_$n","",0.01,"","ยาว(นิ้ว)","","label-inline","min=1","length[]")
                     . $form->show_num("sheet_per_unit_$n","",1,"","แผ่นต่อเล่ม","จำนวณแผ่นชิ้นงานต่อหนังสือ 1 เล่ม = (หน้า/2)","label-inline","min=1","sheet_per_unit[]")
                     . "</div><!-- .form-section -->"
                     . "<div class='form-section'>"
@@ -518,29 +518,31 @@ function show_waste($coid,$fnmeta=null){
     global $db;
     global $form;
     $cmeta = $db->get_meta("company_meta", "company_id", $coid);
-    if($coid=="1"){
+    $html = "";
+    if($coid==1||$coid=="1"){
+        var_dump("yo");
         $company = array(
             "Good Head Printing & Packaging Group" => "GHPP",
             "K.PON 1996" => "K.PON"
         );
-        $html = $form->show_hidden("ele_type","ele_type",7)
-            . $form->show_hidden("paper_waste","paper_waste",36)
-            . $form->show_hidden("plate_waste","plate_waste",38);
-        $html .= $form->show_select("sub_comp", $company, "label-3070","ผลิคโดย",(isset($fnmeta['sub_comp'])?$fnmeta['sub_comp']:null));
-    } else if(isset($cmeta['ele_type'])){
-        $html = $form->show_hidden("ele_type","ele_type",$cmeta['ele_type'])
+        $html .= "<div class='form-section'>"
+        . $form->show_select("sub_comp", $company, "label-3070","ผลิคโดย",(isset($fnmeta['sub_comp'])?$fnmeta['sub_comp']:null))
+        . "</div>";
+    }
+    if(isset($cmeta['ele_type'])){
+        $html .= $form->show_hidden("ele_type","ele_type",$cmeta['ele_type'])
             . $form->show_hidden("paper_waste","paper_waste",$cmeta['paper_waste'])
             . $form->show_hidden("plate_waste","plate_waste",$cmeta['plate_waste']);
     } else {
         $ele_type = $db->get_mat($coid,"7",false);
         $paper_waste = $db->get_mat($coid,"8",false);
         $plate_waste = $db->get_mat($coid,"9",false);
-        $html = "<div class='form-section'>"
+        $html .= "<div class='form-section'>"
             . "<h4>แหล่งไฟฟ้า, การจัดการกระดาษเสียและแม่พิมพ์</h4>"
             . $form->show_select("ele_type", $ele_type, "label-3070","ไฟฟ้า",(isset($fnmeta['ele_type'])?$fnmeta['ele_type']:null))
             . $form->show_select("paper_waste", $paper_waste, "label-3070","เศษกระดาษ",(isset($fnmeta['paper_waste'])?$fnmeta['paper_waste']:null))
             . $form->show_select("plate_waste", $plate_waste, "label-3070","แม่พิมพ์ใช้แล้ว",(isset($fnmeta['plate_waste'])?$fnmeta['plate_waste']:null))
             . "</div><!-- .form-section -->";
-        return $html;
     }
+    return $html;
 }
