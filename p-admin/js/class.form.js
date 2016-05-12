@@ -533,11 +533,11 @@ function check_coupon(id,pid){
     var input = $("#"+id);
     var url = $("#referurl").val();
     console.log(url);
-    var reg = /^[A-Z0-9]{4,10}$/; //A-Z และ หรือ 0-9 จำนวณ 4 ภึง 10 ตัวอักษร
+    var reg = /^[A-Z0-9]{4,10}$/; //A-Z และ หรือ 0-9 จำนวน 4 ภึง 10 ตัวอักษร
     input.on("blur",function(){
         var val = input.val();
         if(val.search(reg)===-1){
-            cross("name-check","icon-remove","A-Z และ หรือ 0-9 จำนวณ 4 ภึง 10 ตัวอักษร");
+            cross("name-check","icon-remove","A-Z และ หรือ 0-9 จำนวน 4 ภึง 10 ตัวอักษร");
         } else {
             var data = {};
             if(typeof pid === "number"){

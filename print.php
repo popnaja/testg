@@ -92,7 +92,7 @@ if(isset($fid)&&$type=="detail"&&$db->check_fn($fid,$coid)){
             . "<h4>$show_cb</h4>"
             . "</div>"
             . "</div><!-- .report-head -->"
-            . "<h2 class='tb-title'>ปริมาณคาร์บอนฟุตพริ้นท์ งานพิมพ์จำนวณ ".number_format($amount,0)." $unit</h2>"
+            . "<h2 class='tb-title'>ปริมาณคาร์บอนฟุตพริ้นท์ งานพิมพ์จำนวน ".number_format($amount,0)." $unit</h2>"
             . $carbon[0]
             . "</div><!-- .report-sum -->"
             . "<div class='report-detail'>"

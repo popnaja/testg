@@ -131,7 +131,7 @@ if($action == "res"&&$db->check_fn($fid,$coid)){
             . "<h4>$show_cb</h4>"
             . "</div>"
             . "</div><!-- .report-head -->"
-            . "<h2>ปริมาณคาร์บอนฟุตพริ้นท์ งานพิมพ์จำนวณ ".number_format($amount,0)." $unit</h2>"
+            . "<h2>ปริมาณคาร์บอนฟุตพริ้นท์ งานพิมพ์จำนวน ".number_format($amount,0)." $unit</h2>"
             . $carbon[0]
             //. $tb->tb_carbon_tt($info[2])
             . "<h2>รายละเอียดการพิมพ์</h2>"
@@ -221,7 +221,7 @@ if($action == "res"&&$db->check_fn($fid,$coid)){
                     . "<h4>ขนาดชิ้นงาน</h4>"
                     . $form->show_num("width_$n","",0.01,"","กว้าง(นิ้ว)","","label-inline","min=1","width[]")
                     . $form->show_num("length_$n","",0.01,"","ยาว(นิ้ว)","ขนาดปกเป็นขนาดกางออกรวมสันและปีก","label-inline","min=1","length[]")
-                    . $form->show_num("sheet_per_unit_$n","",1,"","แผ่นต่อเล่ม","จำนวณแผ่นชิ้นงานต่อหนังสือ 1 เล่ม = (หน้า/2)","label-inline","min=1","sheet_per_unit[]")
+                    . $form->show_num("sheet_per_unit_$n","",1,"","แผ่นต่อเล่ม","จำนวนแผ่นชิ้นงานต่อหนังสือ 1 เล่ม = (หน้า/2)","label-inline","min=1","sheet_per_unit[]")
                     . "</div><!-- .form-section -->"
                     . "<div class='form-section'>"
                     . "<h4>กระดาษ</h4>"
@@ -364,7 +364,7 @@ if($action == "res"&&$db->check_fn($fid,$coid)){
                     . "<h4>ขนาดชิ้นงาน</h4>"
                     . $form->show_num("width_$n",$pinfo[$i]['width'],0.01,"","กว้าง(นิ้ว)","","label-inline","min=1","width[]")
                     . $form->show_num("length_$n",$pinfo[$i]['length'],0.01,"","ยาว(นิ้ว)","","label-inline","min=1","length[]")
-                    . $form->show_num("sheet_per_unit_$n",$pinfo[$i]['sheet_per_unit'],0.1,"","แผ่นต่อเล่ม","จำนวณแผ่นชิ้นงานต่อหนังสือ 1 เล่ม = (หน้า/2)","label-inline","min=1","sheet_per_unit[]")
+                    . $form->show_num("sheet_per_unit_$n",$pinfo[$i]['sheet_per_unit'],0.1,"","แผ่นต่อเล่ม","จำนวนแผ่นชิ้นงานต่อหนังสือ 1 เล่ม = (หน้า/2)","label-inline","min=1","sheet_per_unit[]")
                     . "</div><!-- .form-section -->"
                     . "<div class='form-section'>"
                     . "<h4>กระดาษ</h4>"
@@ -389,7 +389,7 @@ if($action == "res"&&$db->check_fn($fid,$coid)){
                     . "<h4>ขนาดชิ้นงาน</h4>"
                     . $form->show_num("width_$n","",0.01,"","กว้าง(นิ้ว)","","label-inline","min=1","width[]")
                     . $form->show_num("length_$n","",0.01,"","ยาว(นิ้ว)","","label-inline","min=1","length[]")
-                    . $form->show_num("sheet_per_unit_$n","",1,"","แผ่นต่อเล่ม","จำนวณแผ่นชิ้นงานต่อหนังสือ 1 เล่ม = (หน้า/2)","label-inline","min=1","sheet_per_unit[]")
+                    . $form->show_num("sheet_per_unit_$n","",1,"","แผ่นต่อเล่ม","จำนวนแผ่นชิ้นงานต่อหนังสือ 1 เล่ม = (หน้า/2)","label-inline","min=1","sheet_per_unit[]")
                     . "</div><!-- .form-section -->"
                     . "<div class='form-section'>"
                     . "<h4>กระดาษ</h4>"
