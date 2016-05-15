@@ -17,6 +17,7 @@ function show_sub_menu(){
         var sub = $(this).siblings("ul");
         $(this).toggleClass("span-act");
         sub.toggleClass("form-hide");
+        flex_menu();
     });
 }
 function show_mobilem(){
@@ -34,6 +35,7 @@ $(document).ready(function(){
     var ct = $("#content");
     mh = menu.outerHeight();
     wh = $(window).height()-44;
+    ct.height("auto");
     ch = ct.height();
     ph = panel.height();
     if(mh>wh){
