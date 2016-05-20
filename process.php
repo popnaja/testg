@@ -63,7 +63,7 @@ if($action == "add"){
         $content .= "<div class='process-box'>"
                 . $form->show_select("process_$j", $p_process, "label-inline sel-process")
                 . $form->show_select("mach_$j", $mach, "label-inline",null,null,"","mach[]")
-                . $form->show_num("mult_$j",1,1,"","ตัดเป็น(ส่วน)","","label-3070 form-hide","","mult[]")
+                . $form->show_num("mult_$j",1,1,"","ผ่าเป็น(ส่วน)","","label-3070 form-hide","","mult[]")
                 . $form->show_hidden("seq_$j","seq[]",$j)
                 . "</div><!-- .process-box -->"
                 //. "<div class='transit-box'>"
@@ -114,7 +114,7 @@ if($action == "add"){
         $content .= "<div class='process-box'>"
                 . $form->show_select("process_$j", $p_process, "label-inline sel-process",null,$mcat)
                 . $form->show_select("mach_$j", $mach, "label-inline",null,$maid ,"","mach[]")
-                . $form->show_num("mult_$j",$mult,1,"","ตัดเป็น(ส่วน)","","label-3070 $cut_class","","mult[]")
+                . $form->show_num("mult_$j",$mult,1,"","ผ่าเป็น(ส่วน)","","label-3070 $cut_class","","mult[]")
                 . $form->show_hidden("seq_$j","seq[]",$j)
                 . "</div><!-- .process-box -->"
                 . ($j==($pno-1)?"":"<div><img src='".$aroot."/image/arrow-down.png' /></div>");

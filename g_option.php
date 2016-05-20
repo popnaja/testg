@@ -31,6 +31,7 @@ $coating = array(
 $allo_unit = array(
     "แผ่น" => "แผ่น",
     "ยก" => "ยก",
+    "กอง" => "กอง",
     "ชิ้น/เล่ม" => "ชิ้น(เล่ม)"
 );
 $distribution = array(

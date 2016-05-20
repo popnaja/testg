@@ -191,6 +191,9 @@ function calculate_carbon($fid){
             $td= $db->view_testdata($maid);
             $mcat = $mach['machine_cat_id'];
             foreach($comp as $k=>$com){
+                if($com['sheet_per_unit']==1&&count($comp)>1){
+                    continue;
+                }
                 $cid = $k;
                 $input = $in['no'][$cid];
                 $ratio = $input/$td['input'];
@@ -248,16 +251,6 @@ function calculate_carbon($fid){
                     $waste['รีไซเคิลกระดาษ']['id'] = $fnmeta['paper_waste'];
                     $waste['รีไซเคิลกระดาษ']['amount'] = $paper_waste;
                 }
-                //แม่พิพม์ใช้แล้ว
-                if($seq=="พิมพ์"){
-                    $res[$seq]["รีไซเคิลแม่พิมพ์,กก"][$cid ] = $com['plate'];
-                    if(isset($waste['รีไซเคิลแม่พิมพ์'])){
-                        $waste['รีไซเคิลแม่พิมพ์']['amount'] += $com['plate'];
-                    } else {
-                        $waste['รีไซเคิลแม่พิมพ์']['id'] = $fnmeta['plate_waste'];
-                        $waste['รีไซเคิลแม่พิมพ์']['amount'] = $com['plate'];
-                    }
-                }
                 //ของเสียอื่นๆ
                 foreach($out_mat as $kk=>$v){
                     $res[$seq][$v['material'].",".$v['unit']][$cid] = $v['amount'];
@@ -281,6 +274,7 @@ function calculate_carbon($fid){
         } else {
             $res[$seq]["กระบวนการ"][$n-1] = $mach['process'];
             $res[$seq]["เครื่องจักร"][$n-1] = $mach['brand_model'];
+            $hassort = false; //check ว่ามีเก็บเล่ม
             //แปลงแผ่นงานเป็นเล่ม
             if($x==0){
                 for($i=0;$i<$n;$i++){
@@ -290,6 +284,7 @@ function calculate_carbon($fid){
                 $x++;
             }
             if($mach['machine_cat_id']=="5"){
+                $hassort = true;
                 //process เรียง
                 $ninput = array_sum($in['no']);
                 //var_dump($ninput);
@@ -323,8 +318,20 @@ function calculate_carbon($fid){
                 $res[$seq]["ชิ้นงานสมบูรณ์,$aunit"][$n-1 ] = $tok;
             } else {
                 if($in['type'] !== $aunit){
+                    $tdm = $tdmw = "";
                     for($i=0;$i<$n;$i++){
+                        $allo = $in['no'][$i] - $in['min']*$comp[$i]['sheet_per_unit']/$comp[$i]['sheet_per_plate']*$comp[$i]['mult'];
+                        $allow = round($allo/$comp[$i]['mult']*$comp[$i]['m_width']*$comp[$i]['m_length']*$comp[$i]["weight"]/500/3100,5);
+                        $tdm .= ($i==0?"":" / ").$allo;
+                        $tdmw .= ($i==0?"":" / ").$allow;
                         $in['no'][$i] = $in['no'][$i]*$comp[$i]['sheet_per_plate']/$comp[$i]['mult']/$comp[$i]['sheet_per_unit'];
+                        //for total
+                        if(isset($waste['รีไซเคิลกระดาษ'])){
+                            $waste['รีไซเคิลกระดาษ']['amount'] += $allow;
+                        } else {
+                            $waste['รีไซเคิลกระดาษ']['id'] = $fnmeta['paper_waste'];
+                            $waste['รีไซเคิลกระดาษ']['amount'] = $allow;
+                        }
                     }
                     $in['type'] = "ชิ้น/เล่ม";
                 }
@@ -385,6 +392,10 @@ function calculate_carbon($fid){
                 $res[$seq]["ชิ้นงานเผื่อ,$aunit"][$n-1] = $tdm;
                 $res[$seq]["ชิ้นงานเผื่อ,กก"][$n-1] = $tdmw;
             } else {
+                if(!$hassort){
+                    $res[$seq]["ชิ้นงานเผื่อ,$aunit"][$n-1] = $tdm;
+                    $res[$seq]["ชิ้นงานเผื่อ,กก"][$n-1] = $tdmw;
+                }
                 //รีไซเคิลกระดาษ
                 $res[$seq]["ชิ้นงานเสีย,$aunit"][$n-1] = $damage;
 

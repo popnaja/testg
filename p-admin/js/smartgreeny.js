@@ -167,23 +167,22 @@ function dis_sel(dis_type){
     });
 }
 function auto_cal(){
-    $(document).ready(function(){
-        var lay = $("input[name='sheet_per_plate[]']");
-        var sheet = $("input[name='sheet_per_unit[]']");
-        var plate = $("input[name='plate[]']");
-        var pinput = $("input[name='input[]']");
-        lay.add(sheet).on("blur",function(){
-            var i = sheet.index($(this));
-            var amount = $("#amount").val();
-            var vlay = lay.eq(i).val();
-            var vsheet = sheet.eq(i).val()
-            if(amount>0&&vlay>0&&vsheet>0){
-                var pno = Math.ceil(vsheet/vlay);
-                plate.eq(i).val(pno);
-                var paper = Math.ceil(vsheet/vlay*amount);
-                paper = Math.max(1.03*paper,paper+300);
-                pinput.eq(i).val(paper);
-            }
-        });
+$(document).ready(function(){
+    var lay = $("input[name='sheet_per_plate[]']");
+    var sheet = $("input[name='sheet_per_unit[]']");
+    var plate = $("input[name='plate[]']");
+    var pinput = $("input[name='input[]']");
+    lay.on("change",function(){
+        var i = lay.index($(this));
+        var amount = parseInt($("#amount").val());
+        var vlay = $(this).val();
+        var vsheet = sheet.eq(i).val()
+        if(amount>0&&vlay>0&&vsheet>0){
+            var frame = vsheet*2/vlay;
+            plate.eq(i).val(Math.ceil(frame));
+            var paper = Math.ceil(frame/2*(amount+300));
+            pinput.eq(i).val(paper);
+        }
     });
+});
 }
