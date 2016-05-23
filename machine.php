@@ -48,7 +48,7 @@ if($action == "add"){
             . $form->show_select("mcat", $mcat, "label-3070","กระบวนการ")
             . $form->show_text("process","process","","เช่น พิมพ์ 4 สี, 1 สี ,สันกาว ,เย็บลวด","รายละเอียดอื่นๆ","","label-3070")
             . $form->show_select("unit", $allo_unit, "label-3070","หน่วยในการปันส่วน")
-            . $form->show_num("max_defect","",1,"","ชิ้นงานเสียสูงสุด (แผ่น)","","label-3070")
+            . $form->show_num("max_defect","",1,"","ชิ้นงานเสียสูงสุด (<span class='max-defect-unit'>หน่วย</span>)","","label-3070")
             . "</div><!-- .col-50 -->";
     
     $content .= "<div class='col-50'>"
@@ -66,7 +66,10 @@ if($action == "add"){
             . $form->show_hidden("redirect","redirect",$root."machine.php")
             . "</div><!-- .col-100 -->";
     $form->addformvalidate("ez-msg", array('brand','process','unit'));
-    $content .= $form->submitscript("$('#new').submit();");
+    $content .= $form->submitscript("$('#new').submit();")
+            . "<script>"
+            . "defect_unit();"
+            . "</script>";
     
 } else if(isset($maid)&&$db->check_mach($maid,$coid)){
     $mcat = $db->get_mcat($mgroup);
@@ -88,7 +91,7 @@ if($action == "add"){
             . $form->show_select("mcat", $mcat, "label-3070","กระบวนการ",$info['machine_cat_id'])
             . $form->show_text("process","process",$info['process'],"เช่น พิมพ์ 4 สี, 1 สี ,สันกาว ,เย็บลวด","รายละเอียดอื่นๆ","","label-3070")
             . $form->show_select("unit", $allo_unit, "label-3070","หน่วยในการปันส่วน",$info['allocation_unit'])
-            . $form->show_num("max_defect",$maxd,1,"","ชิ้นงานเสียสูงสุด (".$info['allocation_unit'].")","","label-3070")
+            . $form->show_num("max_defect",$maxd,1,"","ชิ้นงานเสียสูงสุด (<span class='max-defect-unit'>".$info['allocation_unit']."</span>)","","label-3070")
             . "</div><!-- .col-50 -->";
 
     $content .= "<div class='col-50'>"
@@ -123,7 +126,10 @@ if($action == "add"){
             . $form->show_hidden("redirect","redirect",$root."machine.php")
             . "</div><!-- .col-100 -->";
     $form->addformvalidate("ez-msg", array('brand','process','unit'));
-    $content .= $form->submitscript("$('#edit').submit();");
+    $content .= $form->submitscript("$('#edit').submit();")
+            . "<script>"
+            . "defect_unit();"
+            . "</script>";
 } else {
     //show all
     $add = $root."machine.php?action=add";

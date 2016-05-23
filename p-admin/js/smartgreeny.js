@@ -186,3 +186,11 @@ $(document).ready(function(){
     });
 });
 }
+function defect_unit(){
+$(document).ready(function(){
+    var tg = $(".max-defect-unit");
+    $("#unit").on("change",function(){
+        tg.html($("#unit option:selected").text());
+    });
+});
+}
