@@ -36,7 +36,7 @@ $type = ["gas"=>"คำนวณจากปริมาณเชื้อเพ
 
 if($action == "add"&&isset($mid)&&$db->check_mat($mid,$coid)){
     //add transport info
-    $info = $db->view_matinfo($mid);
+    $info = $db->get_info("mat", "id", $mid);
 
     $form = new myform('new','cheight');
     $content .= "<h1 class='page-title'>บันทึกข้อมูลการขนส่ง</h1>"

@@ -116,7 +116,7 @@ if($req == "add_msg"){
         header("location:".$_POST['redirect']);
     } else {
         //add transport
-        $tid = $db->add_transport($_POST['name'], $_POST['maxload'], $_POST['ref']);
+        $tid = $db->insert_data("transport",array(null,$_POST['name'], $_POST['maxload'], $_POST['ref'],$_POST['evidence']));
         for($i=0;$i<4;$i++){
             $arrloadef[$_POST['load'][$i]] = $_POST['ef'][$i];
         }
@@ -134,7 +134,13 @@ if($req == "add_msg"){
         header("location:".$_POST['redirect']);
     } else {
         //edit transport
-        $tid = $db->edit_transport($_POST['tid'],$_POST['name'], $_POST['maxload'], $_POST['ref']);
+        $arrinfo = array(
+            "name" => $_POST['name'],
+            "maxload" => $_POST['maxload'],
+            "ref_id" => $_POST['ref'],
+            "evidence" => $_POST['evidence']
+        );
+        $tid = $db->update_data("transport", "id", $_POST['tid'], $arrinfo);
         for($i=0;$i<4;$i++){
             $arr[$_POST['lid'][$i]] = [$_POST['load'][$i],$_POST['ef'][$i]];
         }
@@ -278,7 +284,7 @@ if($req == "add_msg"){
         header("location:".$_POST['redirect']);
     } else {
         //add
-        $db->add_mat($_POST['coid'],$_POST['name'],$_POST['unit'],$_POST['ef'],$_POST['ref'],$_POST['cat']);
+        $db->insert_data("mat", array($_POST['coid'],null,$_POST['name'],$_POST['unit'],$_POST['ef'],$_POST['cat'],$_POST['ref'],$_POST['evidence']));
         $_SESSION['message'] = "เพิ่มวัสดุใหม่สำเร็จ";
         header("location:".$_POST['redirect']);
     }
@@ -289,8 +295,16 @@ if($req == "add_msg"){
         $_SESSION['error'] = "ชื่อซ้ำโปรดลองชื่อใหม่";
         header("location:".$_POST['redirect']);
     } else {
-        //add
-        $db->edit_mat($_POST['mid'],$_POST['name'],$_POST['unit'],$_POST['ef'],$_POST['ref'],$_POST['cat']);
+        //edit
+        $arrdata = array(
+            "name" => $_POST['name'],
+            "unit" => $_POST['unit'],
+            "ef" => $_POST['ef'],
+            "cat_id" => $_POST['cat'],
+            "ref_id" => $_POST['ref'],
+            "evidence" => $_POST['evidence']
+        );
+        $db->update_data("mat", "id", $_POST['mid'], $arrdata);
         $_SESSION['message'] = "แก้ไขวัสดุสำเร็จ";
         header("location:".$_POST['redirect']);
     }

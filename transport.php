@@ -30,7 +30,7 @@ $content .= $menu->showpanel("ผู้ดูแลระบบ","Transport");
 $action = filter_input(INPUT_GET,'action',FILTER_SANITIZE_STRING);
 $tid = filter_input(INPUT_GET,'tid',FILTER_SANITIZE_NUMBER_INT);
 
-
+$ref = $db->get_keypair("ref", "id", "name");
 if($action == "add"){
     //add
     $form = new myform('new','cheight');
@@ -39,8 +39,9 @@ if($action == "add"){
             . $form->show_st_form()
             . "<div class='col-50'>"
             . $form->show_text("name","name","","","ชื่อ","","label-inline")
-            . $form->show_num("maxload","",1,"","โหลดสูงสุด (ตัน)","","label-inline")
-            . $form->show_select("ref", $refer, "left-50 label-inline","ที่มา","แนวทางการประเมิณฯ")
+            . $form->show_num("maxload","",0.01,"","โหลดสูงสุด (ตัน)","","label-inline")
+            . $form->show_select("ref", $ref, "label-inline","ที่มา","แนวทางการประเมิณฯ")
+            . $form->show_textarea("evidence", "", 4, 10, "", "อ้างอิง", "label-inline")
             . "</div><!-- .col-50 -->"
             . "<div class='col-50'>";
     $load = [0,50,75,100];
@@ -59,7 +60,7 @@ if($action == "add"){
     
 } else if(isset($tid)){
     //load data
-    $info = $db->view_transport($tid);
+    $info = $db->get_info("transport", "id", $tid);
     $load = $db->view_load($tid);
     //edit
     $form = new myform('edit','cheight');
@@ -68,8 +69,9 @@ if($action == "add"){
             . $form->show_st_form()
             . "<div class='col-50'>"
             . $form->show_text("name","name",$info['name'],"","ชื่อ","","label-inline")
-            . $form->show_num("maxload",$info['maxload'],1,"","โหลดสูงสุด (ตัน)","","label-inline")
-            . $form->show_select("ref", $refer, "left-50 label-inline","ที่มา",$info['reference'])
+            . $form->show_num("maxload",$info['maxload'],0.01,"","โหลดสูงสุด (ตัน)","","label-inline")
+            . $form->show_select("ref", $ref, "label-inline","ที่มา",$info['ref_id'])
+            . $form->show_textarea("evidence", $info['evidence'], 4, 10, "", "อ้างอิง", "label-inline")
             . "</div><!-- .col-50 -->"
             . "<div class='col-50'>";
     $ck = ['name','maxload','ref'];

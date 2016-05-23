@@ -178,6 +178,7 @@ function calculate_carbon($fid){
     //---------------------------- ทำเล่ม --------------------------------
     $finish = $db->get_finishing($fid);
     $x = 0;
+    $hassort = false; //check ว่ามีเก็บเล่ม
     foreach($finish AS $ind=>$mach){
         $seq = $mach['name'];
         $maid = $mach['machine_id'];
@@ -274,7 +275,6 @@ function calculate_carbon($fid){
         } else {
             $res[$seq]["กระบวนการ"][$n-1] = $mach['process'];
             $res[$seq]["เครื่องจักร"][$n-1] = $mach['brand_model'];
-            $hassort = false; //check ว่ามีเก็บเล่ม
             //แปลงแผ่นงานเป็นเล่ม
             if($x==0){
                 for($i=0;$i<$n;$i++){
@@ -320,7 +320,7 @@ function calculate_carbon($fid){
                 if($in['type'] !== $aunit){
                     $tdm = $tdmw = "";
                     for($i=0;$i<$n;$i++){
-                        $allo = $in['no'][$i] - $in['min']*$comp[$i]['sheet_per_unit']/$comp[$i]['sheet_per_plate']*$comp[$i]['mult'];
+                        $allo = $in['no'][$i] - round($in['min']*$comp[$i]['sheet_per_unit']/$comp[$i]['sheet_per_plate']*$comp[$i]['mult']);
                         $allow = round($allo/$comp[$i]['mult']*$comp[$i]['m_width']*$comp[$i]['m_length']*$comp[$i]["weight"]/500/3100,5);
                         $tdm .= ($i==0?"":" / ").$allo;
                         $tdmw .= ($i==0?"":" / ").$allow;
@@ -393,7 +393,7 @@ function calculate_carbon($fid){
                 $res[$seq]["ชิ้นงานเผื่อ,กก"][$n-1] = $tdmw;
             } else {
                 if(!$hassort){
-                    $res[$seq]["ชิ้นงานเผื่อ,$aunit"][$n-1] = $tdm;
+                    $res[$seq]["ชิ้นงานเผื่อ,แผ่น"][$n-1] = $tdm;
                     $res[$seq]["ชิ้นงานเผื่อ,กก"][$n-1] = $tdmw;
                 }
                 //รีไซเคิลกระดาษ
@@ -506,7 +506,7 @@ function calculate_carbon($fid){
         
         $dis_info = json_decode($fnmeta['dis_info'],true);
         if($fnmeta['dis_type']=="cal-gas"){
-            $gasinfo = $db->view_matinfo($dis_info['gas']);
+            $gasinfo = $db->get_info("mat", "id", $dis_info['gas']);
             $gas_name = $gasinfo['name'];
             $gas_ef = $gasinfo['ef'];
             $tcarbon = $wg*$dis_info['lperkg']*$gas_ef;

@@ -3,7 +3,8 @@ $refer = array(
     "แนวทางการประเมิณฯ" => "แนวทางการประเมิณฯ",
     "Supplier" => "ผู้ผลิต",
     "Thai Research" => "Thai Research",
-    "International Research" => "Inter Research"
+    "International Research" => "Inter Research",
+    "Custom" => "Custom EF"
 );
 $printing_t = array(
     "book" => "หนังสือ,นิตยสาร",

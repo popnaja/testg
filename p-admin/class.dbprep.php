@@ -12,7 +12,7 @@ class dbprep{
         //copy mat
         $mat = $this->get_mat($oid);
         foreach($mat as $k=>$v){
-            $mid = $db->add_mat($coid, $v['name'], $v['unit'], $v['ef'], $v['reference'], $v['cat_id']);
+            $mid = $db->insert_data("mat",array($coid, null,$v['name'], $v['unit'], $v['ef'], $v['cat_id'], $v['ref_id'],$v['evidence']));
             if($v['calculate_type']=="vehicle_distance"){
                 $db->add_mat_vehicle($mid, $v['calculate_type'], $v['distance'], $v['transport_id'], $v['load_come'], $v['load_back']);
             } else {

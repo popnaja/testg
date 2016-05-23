@@ -4,31 +4,6 @@ class greenDB extends myDB{
     public function __construct() {
         parent::__construct();
     }
-    public function add_transport($name,$max,$ref){
-        try {
-            $stmt = $this->conn->prepare("INSERT INTO transport VALUES (null,:name,:max,:ref)");
-            $stmt->bindParam(":name",$name);
-            $stmt->bindParam(":max",$max);
-            $stmt->bindParam(":ref",$ref);
-            $stmt->execute();
-            return $this->conn->lastInsertId();
-        } catch (Exception $ex) {
-            db_error(__METHOD__, $ex);
-        }
-    }
-    public function edit_transport($id,$name,$max,$ref){
-        try {
-            $stmt = $this->conn->prepare("UPDATE transport SET name=:name,maxload=:max,reference=:ref WHERE id=:id");
-            $stmt->bindParam(":name",$name);
-            $stmt->bindParam(":max",$max);
-            $stmt->bindParam(":ref",$ref);
-            $stmt->bindParam(":id",$id);
-            $stmt->execute();
-            return ($stmt->rowCount()>0?true:false);
-        } catch (Exception $ex) {
-            db_error(__METHOD__, $ex);
-        }
-    }
     public function check_transport_name($name,$tid=0){
         try {
             $stmt = $this->conn->prepare("SELECT id FROM transport WHERE name=:name AND id<>:tid");
@@ -78,9 +53,11 @@ class greenDB extends myDB{
             } else {
                 $sql = <<<END_OF_TEXT
                     SELECT
-                    CONCAT("<a href='transport.php?tid=",id,"' title='Edit'>",name,"</a>"),
-                    maxload,reference
-                    FROM transport ORDER BY name ASC
+                    CONCAT("<a href='transport.php?tid=",transport.id,"' title='Edit'>",transport.name,"</a>"),
+                    maxload,ref.name
+                    FROM transport 
+                    LEFT JOIN ref ON ref.id=ref_id
+                    ORDER BY maxload ASC,transport.name ASC
 END_OF_TEXT;
             }
             $stmt = $this->conn->prepare($sql);
@@ -235,7 +212,7 @@ END_OF_TEXT;
         $sql = <<<END_OF_TEXT
 SELECT 
 CONCAT("<a href='mat.php?mid=",mat.id,"'>",mat.name,"</a>"),
-unit,ef,reference,cat.name,
+unit,ef,ref.name AS refname,cat.name,
 IF(ISNULL(calculate_type)
     ,CONCAT("<a href='mat_transport.php?action=add&mid=",mat.id,"' title='Add' class='a-red'>เพิ่ม</a>")
     ,CONCAT("<a href='mat_transport.php?mid=",mat.id,"' title='Edit'>แก้ไข</a>")
@@ -243,54 +220,14 @@ IF(ISNULL(calculate_type)
 FROM mat
 LEFT JOIN cat ON cat.id=cat_id
 LEFT JOIN mat_transport AS mt ON mt.mat_id=mat.id
+LEFT JOIN ref ON ref.id=mat.ref_id
 WHERE company_id=:coid $filter
 ORDER BY cat.name ASC,mat.name ASC
-
 END_OF_TEXT;
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(":coid",$coid);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-    public function view_matinfo($mid){
-        try {
-            $stmt = $this->conn->prepare("SELECT * FROM mat WHERE id=:mid");
-            $stmt->bindParam(":mid",$mid);
-            $stmt->execute();
-            return $stmt->fetch(PDO::FETCH_ASSOC);
-        } catch (Exception $ex) {
-            db_error(__METHOD__, $ex);
-        }
-    }
-    public function add_mat($coid,$name,$unit,$ef,$ref,$cat){
-        try {
-            $stmt = $this->conn->prepare("INSERT INTO mat VALUES (:coid,null,:name,:unit,:ef,:ref,:cat)");
-            $stmt->bindParam(":coid",$coid);
-            $stmt->bindParam(":name",$name);
-            $stmt->bindParam(":unit",$unit);
-            $stmt->bindParam(":ef",$ef);
-            $stmt->bindParam(":ref",$ref);
-            $stmt->bindParam(":cat",$cat);
-            $stmt->execute();
-            return $this->conn->lastInsertId();
-        } catch (Exception $ex) {
-            db_error(__METHOD__, $ex);
-        }
-    }
-    public function edit_mat($mid,$name,$unit,$ef,$ref,$cat){
-        try {
-            $stmt = $this->conn->prepare("UPDATE mat SET name=:name,unit=:unit,ef=:ef,reference=:ref,cat_id=:cat WHERE id=:mid");
-            $stmt->bindParam(":mid",$mid);
-            $stmt->bindParam(":name",$name);
-            $stmt->bindParam(":unit",$unit);
-            $stmt->bindParam(":ef",$ef);
-            $stmt->bindParam(":ref",$ref);
-            $stmt->bindParam(":cat",$cat);
-            $stmt->execute();
-            return ($stmt->rowCount()>0?true:false);
-        } catch (Exception $ex) {
-            db_error(__METHOD__, $ex);
-        }
     }
     public function view_user($cid=null,$page=null,$perpage=null){
         $off = (isset($perpage)?$perpage*($page-1):0);
@@ -571,7 +508,7 @@ END_OF_TEXT;
     }
     public function get_vehicle(){
         try {
-            $stmt = $this->conn->prepare("SELECT id,CONCAT(name,' บรรทุกสูงสุด ',maxload,' ตัน') FROM transport");
+            $stmt = $this->conn->prepare("SELECT id,CONCAT(name,' บรรทุกสูงสุด ',maxload,' ตัน') FROM transport ORDER BY maxload ASC,name ASC");
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
         } catch (Exception $ex) {
