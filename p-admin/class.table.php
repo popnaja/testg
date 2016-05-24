@@ -153,11 +153,15 @@ class mytable {
     }
     public function tb_carbon($acol,$arr){
         $col = 1;
+        foreach($arr as $k=>$v){
+            foreach($v as $kk=>$vv){
+                $col = max(sizeof($vv,0),$col);
+            }
+        }
         $html = "<table class='full-report'>";
         //get colume id
         foreach($arr as $k=>$v){
             foreach($v as $kk=>$vv){
-                $col = max(sizeof($vv,0),$col);
                 $wu = explode(",",$kk);
                 if(sizeof($wu,0)>1){
                     $html .= "<tr><th>$wu[0]</th><th>$wu[1]</th>";

@@ -1547,4 +1547,56 @@ END_OF_TEXT;
             db_error(__METHOD__, $ex);
         }
     }
+    public function copy_ele($oid,$nid){
+         try {
+            $sql = <<<END_OF_TEXT
+CREATE TEMPORARY TABLE tmp1 SELECT * FROM electricity WHERE machine_id=$oid;
+UPDATE tmp1 SET id=null,machine_id = $nid;
+INSERT INTO electricity SELECT * FROM tmp1;
+DROP TEMPORARY TABLE IF EXISTS tmp1;
+END_OF_TEXT;
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute();
+        } catch (Exception $ex) {
+            db_error(__METHOD__, $ex);
+        }
+    }
+    public function find_nmat($matid,$compid){
+        try {
+            $sql = <<<END_OF_TEXT
+SELECT id,name
+FROM mat
+WHERE company_id=:compid AND name=(
+	SELECT name FROM mat WHERE id=:matid
+)
+END_OF_TEXT;
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(":compid",$compid);
+            $stmt->bindParam(":matid",$matid);
+            $stmt->execute();
+            $res = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $res['id'];
+        } catch (Exception $ex) {
+            db_error(__METHOD__, $ex);
+        }
+    }
+    public function find_nmach($machid,$compid){
+        try {
+            $sql = <<<END_OF_TEXT
+SELECT id,brand_model
+FROM machine
+WHERE company_id=:compid AND brand_model=(
+	SELECT brand_model FROM machine WHERE id=:machid
+)
+END_OF_TEXT;
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(":compid",$compid);
+            $stmt->bindParam(":machid",$machid);
+            $stmt->execute();
+            $res = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $res['id'];
+        } catch (Exception $ex) {
+            db_error(__METHOD__, $ex);
+        }
+    }
 }

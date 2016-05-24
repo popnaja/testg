@@ -40,6 +40,8 @@ function calculate_carbon($fid){
     $res3['วัตถุดิบ'] = array();
     //get components
     $comp = $db->get_comp_detail($fid);
+    //weight per unit
+    $wperu = weight_per_u($comp);
     foreach($comp as $k=>$com){
         $cid = $k;
         $input = $com['input'];
@@ -98,6 +100,35 @@ function calculate_carbon($fid){
                 $output = $input-$damage;
             }
             
+            //cal weight
+            $in_wg = $com['m_width']*$com['m_length']*$com['weight']/$comp[$k]['mult']/500/3100;
+            $out_wg = $com['m_width']*$com['m_length']*$com['weight']/($comp[$k]['mult']*$mach['input_mult'])/500/3100;
+            //คำนวณการขนส่ง ถ้ามี
+            if(isset($mmeta['go_transit'])&&$mmeta['go_transit']!=""){
+                $go = json_decode($mmeta['go_transit'],true);
+                $vinfo = $db->view_transport($go['tid']);
+                $efs = $db->get_keypair("transport_ef", "tload", "ef", "WHERE transport_id=".$go['tid']);
+                if(isset($wipt[$seq])){
+                    $wipt[$seq][0] += $in_wg*$input;
+                    $wipt[$seq][1] = cal_transit_carbon($wipt[$seq][0],$go['dis'],$go['inload'],$efs[$go['inload']],$go['outload'],$efs[$go['outload']],$vinfo);
+                } else {
+                    $wipt[$seq] = array($in_wg*$input,cal_transit_carbon($in_wg*$input,$go['dis'],$go['inload'],$efs[$go['inload']],$go['outload'],$efs[$go['outload']],$vinfo));
+                }
+                
+            }
+            if(isset($mmeta['back_transit'])&&$mmeta['back_transit']!=""){
+                $go = json_decode($mmeta['back_transit'],true);
+                $vinfo = $db->view_transport($go['tid']);
+                $efs = $db->get_keypair("transport_ef", "tload", "ef", "WHERE transport_id=".$go['tid']);
+                //ขนกลับมา
+                if(isset($wipt2)){
+                    $wipt2[$seq][0] += $out_wg*$output;
+                    $wipt2[$seq][1] = cal_transit_carbon($wipt2[$seq][0],$go['dis'],$go['inload'],$efs[$go['inload']],$go['outload'],$efs[$go['outload']],$vinfo);
+                } else {
+                    $wipt2[$seq] = array($out_wg*$output,cal_transit_carbon($out_wg*$output,$go['dis'],$go['inload'],$efs[$go['inload']],$go['outload'],$efs[$go['outload']],$vinfo));
+                }
+            }
+            
             //add info to comp
             $comp[$k]['mult'] = $comp[$k]['mult']*$mach['input_mult'];
 
@@ -106,6 +137,8 @@ function calculate_carbon($fid){
             $res[$seq]["ชิ้นงานเข้า,$aunit"][$cid] = $input;
             $res[$seq]["ชิ้นงานสมบูรณ์,$aunit"][$cid ] = $output;
 
+            
+            
             $input = $output;
 
             //electricity
@@ -139,7 +172,7 @@ function calculate_carbon($fid){
             $out_mat = $db->view_ef($tdid, $ratio, false);
             $res[$seq]['สารออก'] = "";
             $res[$seq]["ชิ้นงานเสีย,$aunit"][$cid] = $damage;
-            $paper_waste = round($damage*$com['m_width']*$com['m_length']*$com['weight']/$comp[$k]['mult']/500/3100,5);
+            $paper_waste = $damage*$out_wg;
             $res[$seq]["ชิ้นงานเสีย,กก"][$cid] = $paper_waste;
             if(isset($waste['รีไซเคิลกระดาษ'])){
                 $waste['รีไซเคิลกระดาษ']['amount'] += $paper_waste;
@@ -191,7 +224,7 @@ function calculate_carbon($fid){
             $td= $db->view_testdata($maid);
             $mcat = $mach['machine_cat_id'];
             foreach($comp as $k=>$com){
-                if($com['sheet_per_unit']==1&&count($comp)>1){
+                if($com['sheet_per_unit']==1&&count($comp)>1){ //ปกไม่ต้องพับ
                     continue;
                 }
                 $cid = $k;
@@ -351,8 +384,33 @@ function calculate_carbon($fid){
             //คำนวณการขนส่ง ถ้ามี
             if(isset($mmeta['go_transit'])&&$mmeta['go_transit']!=""){
                 $go = json_decode($mmeta['go_transit'],true);
+                $vinfo = $db->view_transport($go['tid']);
                 $efs = $db->get_keypair("transport_ef", "tload", "ef", "WHERE transport_id=".$go['tid']);
-                //var_dump($efs);
+                //ส่งไปเข้าเล่ม
+                if($mach['machine_cat_id']==6){
+                    $w = 0;
+                    for($i=0;$i<$n;$i++){
+                        //แผ่น = เล่ม * (หน้า/เล่ม)/(หน้า/แผ่น)
+                        $sheet = $comp[$i]['sheet_per_unit']/$comp[$i]['sheet_per_plate'];
+                        $w += $sheet*$comp[$i]['m_width']*$comp[$i]['m_length']*$comp[$i]["weight"]/500/3100;
+                    }
+                    $wipt[$seq] = array($input,cal_transit_carbon($w*$ninput,$go['dis'],$go['inload'],$efs[$go['inload']],$go['outload'],$efs[$go['outload']],$vinfo));
+                }
+            }
+            if(isset($mmeta['back_transit'])&&$mmeta['back_transit']!=""){
+                $go = json_decode($mmeta['back_transit'],true);
+                $vinfo = $db->view_transport($go['tid']);
+                $efs = $db->get_keypair("transport_ef", "tload", "ef", "WHERE transport_id=".$go['tid']);
+                //ขนกลับมา
+                if($mach['machine_cat_id']==6){
+                    $w = 0;
+                    for($i=0;$i<$n;$i++){
+                        //แผ่น = เล่ม * (หน้า/เล่ม)/(หน้า/แผ่น)
+                        $sheet = $comp[$i]['sheet_per_unit']/$comp[$i]['sheet_per_plate'];
+                        $w += $sheet*$comp[$i]['m_width']*$comp[$i]['m_length']*$comp[$i]["weight"]/500/3100;
+                    }
+                    $wipt2[$seq] = array($output,cal_transit_carbon($w*$output,$go['dis'],$go['inload'],$efs[$go['inload']],$go['outload'],$efs[$go['outload']],$vinfo));
+                }
             }
             //electricity
             $hour = $ratio*($td['idle_min']+$td['load_min'])/60;
@@ -422,12 +480,7 @@ function calculate_carbon($fid){
                         $waste['รีไซเคิลกระดาษ']['amount'] = $weight;
                     }
                 } else {
-                    $weight = 0;
-                    for($i=0;$i<$n;$i++){
-                        //แผ่น = เล่ม * (หน้า/เล่ม)/(หน้า/แผ่น)
-                        $sheet = ($damage)*$comp[$i]['sheet_per_unit'];
-                        $weight += round($sheet*$comp[$i]['width']*$comp[$i]['length']*$comp[$i]["weight"]/500/3100,5);
-                    }
+                    $weight = $wperu*$damage;
                     $res[$seq]["ชิ้นงานเสีย,กก"][$n-1] = $weight;
 
                     if(isset($waste['รีไซเคิลกระดาษ'])){
@@ -457,6 +510,7 @@ function calculate_carbon($fid){
     //คำนวณ หนังสือเกิน
     $finfo = $db->view_finfo($fid);
     $over = $output-$finfo['amount'];
+    $overwg = $over*$wperu;
     //var_dump($in);
     if($over<0){
         $res[$seq]["ชิ้นงานเผื่อเสีย,".$mach['allocation_unit']][$n-1] = "ชิ้นงานน้อยกว่าแผน ".abs($over);
@@ -467,14 +521,9 @@ function calculate_carbon($fid){
     } else {
         $res[$seq]["ชิ้นงานเผื่อเสีย,".$mach['allocation_unit']][$n-1] = $over;
     }
-    $weight = 0;
-    for($i=0;$i<$n;$i++){
-        //แผ่น = เล่ม * (แผ่น/เล่ม)
-        $sheet = ($over)*$comp[$i]['sheet_per_unit'];
-        $weight += round($sheet*$comp[$i]['width']*$comp[$i]['length']*$comp[$i]["weight"]/500/3100,5);
-    }
-    $res[$seq]["ชิ้นงานเผื่อเสีย,กก"][$n-1] = $weight;
-    $waste['รีไซเคิลกระดาษ']['amount'] += $weight;
+
+    $res[$seq]["ชิ้นงานเผื่อเสีย,กก"][$n-1] = $overwg;
+    $waste['รีไซเคิลกระดาษ']['amount'] += $overwg;
     
     //คำนวณเศษกระดาษ
     $weight2 = 0;
@@ -493,19 +542,21 @@ function calculate_carbon($fid){
         $res3['วัตถุดิบ'][$k] = $db->get_ef($v['id'],$v['amount']);
     }
     foreach($ele as $k=>$v){
+        if(isset($wipt[$k])){
+            $res3['การผลิต']["(ขนส่งไป) ".$k] = $wipt[$k][1];
+        }
         $res3['การผลิต'][$k] = $db->get_ef($v['id'],$v['amount']);
+        if(isset($wipt2[$k])){
+            $res3['การผลิต']["(ขนส่งกลับ) ".$k] = $wipt2[$k][1];
+        }
     }
     foreach($waste as $k=>$v){
         $res3['ของเสียจากการผลิต'][$k] = $db->get_ef($v['id'],$v['amount']);
     }
     
-    $wg = 0;
+
     $fg = min($output,$finfo['amount']);
-    for($i=0;$i<$n;$i++){
-        //แผ่น = เล่ม * แผ่น/เล่ม
-        $sheet = ($fg)*$comp[$i]['sheet_per_unit'];
-        $wg += round($sheet*$comp[$i]['width']*$comp[$i]['length']*$comp[$i]["weight"]/500/3100,5);
-    }
+    $wg = $fg*$wperu;
     //distribution
     if(isset($fnmeta['dis_type'])&&$fnmeta['dis_type']!="cal-none"){
         $dis_info = json_decode($fnmeta['dis_info'],true);
@@ -562,26 +613,8 @@ function calculate_carbon($fid){
                 $tweight = $wg*$amount/$fg;
                 $ef_come = $vef[$vdata['go']];
                 $ef_back = $vef[$vdata['back']];
-                $tcarbon = cal_transit_carbon($tweight,$vdata['distance'],$vdata['go'],$ef_come,$vdata['back'],$ef_back,$vinfo['maxload']);
                 $l = $i+1;
-                $res3['ขนส่งสินค้า']["จุดที่ $l (".number_format($amount,0).")"] = array(
-                    'material' => "Finished Goods",
-                    "unit" => "กก",
-                    "amount" => $tweight,
-                    "ef" => "0",
-                    "material_carbon" => "0",
-                    "calculate_type" => "",
-                    "gas" => "",
-                    "gas_ef" => "",
-                    "liter_per_kg" => "0",
-                    "name" => $vinfo['name'],
-                    "load_come" => $vdata['go'],
-                    "load_back" => $vdata['back'],
-                    'distance' => $vdata['distance'],
-                    'ef_come' => $ef_come,
-                    'ef_back' => $ef_back,
-                    'transit_carbon' => round($tcarbon,3)
-                );
+                $res3['ขนส่งสินค้า']["จุดที่ $l (".number_format($amount,0).")"] = cal_transit_carbon($tweight,$vdata['distance'],$vdata['go'],$ef_come,$vdata['back'],$ef_back,$vinfo);
             }
         }
     }
@@ -636,11 +669,40 @@ function calculate_carbon($fid){
     );
     return array($res,$res2,$res3,$res4);
 }
-function cal_transit_carbon($wg,$dis,$load1,$ef1,$load2,$ef2,$max){
-    if($load2>0){
+function cal_transit_carbon($wg,$dis,$load1,$ef1,$load2,$ef2,$vinfo){
+    if($load2>0&&$load1>0){
         $carbon = $wg/1000*$dis*($ef1*$load1/($load1-$load2)+$ef2*$load2/($load1-$load2));
+    } else if($load1==0){
+        $carbon = $wg/1000*$dis*($ef1/($vinfo['maxload']*$load2/100)+$ef2);
     } else {
-        $carbon = $wg/1000*$dis*($ef1+$ef2/($max*$load1/100));
+        $carbon = $wg/1000*$dis*($ef1+$ef2/($vinfo['maxload']*$load1/100));
     }
-    return $carbon;
+    $res = array(
+        'material' => "Finished Goods",
+        "unit" => "กก",
+        "amount" => $wg,
+        "ef" => "0",
+        "material_carbon" => "0",
+        "calculate_type" => "",
+        "gas" => "",
+        "gas_ef" => "",
+        "liter_per_kg" => "0",
+        "name" => $vinfo['name'],
+        "load_come" => $load1,
+        "load_back" => $load2,
+        'distance' => $dis,
+        'ef_come' => $ef1,
+        'ef_back' => $ef2,
+        'transit_carbon' => round($carbon,3)
+    );
+    return $res;
+}
+function weight_per_u($comp){
+    $w = 0;
+    for($i=0;$i<count($comp);$i++){
+        //แผ่น = เล่ม * แผ่น/หน่วย
+        $sheet = $comp[$i]['sheet_per_unit'];
+        $w += round($sheet*$comp[$i]['width']*$comp[$i]['length']*$comp[$i]["weight"]/500/3100,5);
+    }
+    return $w;
 }
