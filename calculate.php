@@ -163,6 +163,22 @@ if($action == "res"&&$db->check_fn($fid,$coid)){
             . show_design($coid,null)
             . show_waste($coid, null);
     
+    $dis = "";
+    for($i=0;$i<5;$i++){
+        $hid = ($i==0?"":"form-hide");
+        $dis .= "<div class='tab-section dis-cond $hid'>"
+            . $form->show_select("dis_v_type_$i", $vehicle, "label-3070","พาหนะ",null,"","vtype[]")
+            . $form->show_num("dis_v_amount_$i",0,1,"","จำนวน(เล่ม,ชิ้น)","","label-3070","min='0'","vamount[]")  
+            . $form->show_num("dis_v_distance_$i",0,0.01,"","ระยะทาง(กม)","","label-3070","min='0'","vdis[]")
+            . $form->show_select("dis_v_goload_$i", $load, "label-3070","บรรทุกขาไป(%)",null,"","vgoload[]")
+            . $form->show_select("dis_v_backload_$i", $load, "label-3070","บรรทุกขากลับ(%)",null,"","vbackload[]")
+            . "</div><!-- .dis-cond -->";
+    }
+    $dis .= "<input id='view-more-but' type='button' value='เพิ่มจุดส่งของ' style='width:100%'/>"
+            . "<script>"
+            . "view_more_section('dis-cond');"
+            . "</script>";
+    
     //distibution
     $content .= "<div class='form-section'>"
             . "<h4>ส่งสินค้าไปยังผู้ซื้อ</h4>"
@@ -175,10 +191,7 @@ if($action == "res"&&$db->check_fn($fid,$coid)){
             . $form->show_num("dis_gas_lperkg",0,0.0001,"","ลิตร/สินค้า 1 กก","","label-3070")
             . "</div>"
             . "<div id='cal-vehicle' class='cal-group form-hide'>"
-            . $form->show_select("dis_v_type", $vehicle, "label-3070","พาหนะ")
-            . $form->show_num("dis_v_distance",0,0.01,"","ระยะทาง(กม)","","label-3070")
-            . $form->show_select("dis_v_goload", $load, "left-50 label-inline","บรรทุกขาไป(%)")
-            . $form->show_select("dis_v_backload", $load, "left-50 label-inline","บรรทุกขากลับ(%)")
+            . $dis
             . "</div>"
             . "<script>dis_sel();</script>"
             . "</div><!-- .form-section -->"
@@ -284,10 +297,43 @@ if($action == "res"&&$db->check_fn($fid,$coid)){
             . $form->show_hidden("page","page",0)
             . show_design($coid, $design)
             . show_waste($coid, $fnmeta);
-   
     //distribution
     $dis_type = $fnmeta['dis_type'];
     $dis_info = json_decode($fnmeta['dis_info'],true);
+    if($dis_type=="cal-vehicle"){
+        $disv = json_decode($fnmeta['dis_v_info'],true);
+    } else {
+        $disv = array();
+    }
+    //dis by vehicle
+    $dis = "";
+    for($i=0;$i<5;$i++){
+        if(isset($disv[$i])){
+            $hid = "";
+            $vinfo = $disv[$i];
+        } else {
+            $hid = ($i==0?"":"form-hide");
+            $vinfo = array(
+                "vehicle" => null,
+                "amount" => 0,
+                "distance" => 0,
+                "go" => null,
+                "back" => null
+            );
+        }
+        $dis .= "<div class='tab-section dis-cond $hid'>"
+            . $form->show_select("dis_v_type_$i", $vehicle, "label-3070","พาหนะ",$vinfo['vehicle'],"","vtype[]")
+            . $form->show_num("dis_v_amount_$i",$vinfo['amount'],1,"","จำนวน(เล่ม,ชิ้น)","","label-3070","min='0'","vamount[]")  
+            . $form->show_num("dis_v_distance_$i",$vinfo['distance'],0.01,"","ระยะทาง(กม)","","label-3070","min='0'","vdis[]")
+            . $form->show_select("dis_v_goload_$i", $load, "label-3070","บรรทุกขาไป(%)",$vinfo['go'],"","vgoload[]")
+            . $form->show_select("dis_v_backload_$i", $load, "label-3070","บรรทุกขากลับ(%)",$vinfo['back'],"","vbackload[]")
+            . "</div><!-- .dis-cond -->";
+    }
+    $dis .= "<input id='view-more-but' type='button' value='เพิ่มจุดส่งของ' style='width:100%'/>"
+            . "<script>"
+            . "view_more_section('dis-cond');"
+            . "</script>";
+    
     $content .= "<div class='form-section'>"
             . "<h4>ส่งสินค้าไปยังผู้ซื้อ</h4>"
             . $form->show_select("dis_type", $distribution, "label-3070","รูปแบบการคำนวณ",$dis_type)
@@ -299,10 +345,7 @@ if($action == "res"&&$db->check_fn($fid,$coid)){
             . $form->show_num("dis_gas_lperkg",$dis_info['lperkg'],0.0001,"","ลิตร/สินค้า 1 กก","","label-3070")
             . "</div>"
             . "<div id='cal-vehicle' class='cal-group form-hide'>"
-            . $form->show_select("dis_v_type", $vehicle, "label-3070","พาหนะ",$dis_info['vehicle'])
-            . $form->show_num("dis_v_distance",$dis_info['distance'],0.01,"","ระยะทาง(กม)","","label-3070")
-            . $form->show_select("dis_v_goload", $load, "left-50 label-inline","บรรทุกขาไป(%)",$dis_info['goload'])
-            . $form->show_select("dis_v_backload", $load, "left-50 label-inline","บรรทุกขากลับ(%)",$dis_info['backload'])
+            . $dis
             . "</div>"
             . "<script>dis_sel('$dis_type');</script>"
             . "</div><!-- .form-section -->"

@@ -1,3 +1,9 @@
+/*-- error --*/
+pre,
+.xdebug-error{
+    padding-left:160px;
+    padding-top:50px;
+}
 /*-- admin ajax loading --*/
 body.pg-loading {
     overflow:hidden;
@@ -207,7 +213,9 @@ textarea:focus {
     font-size:15px;
 }
 input[type='button'],
-.gray-but{
+input[type='button']:focus,
+.gray-but,
+.gray-but:focus{
     display:inline-block;
     -webkit-border-radius: 0;
     -webkit-appearance: none;
@@ -810,6 +818,9 @@ select::-moz-focus-inner { /*Remove button padding in FF*/
     padding:10px;
     border:rgb(230,230,230) 1px solid;
     margin-bottom:25px;
+}
+.tab-section h4 {
+    margin-bottom:15px;
 }
 .auto-list {
     float:left;

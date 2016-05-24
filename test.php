@@ -8,25 +8,32 @@ __autoload("menu");
 __autoload("pdo_g");
 $db = new greenDB();
 
-//correct mat table
-$oldtonew = array(
-    "แนวทางการประเมิณฯ" => 2,
-    "Supplier" => 1,
-    "Thai Research" => 3,
-    "International Research" => 4,
-    "Custom" => 5
-);
+//correct distribute
 /*
-$mat = $db->get_keypair("mat", "id", "reference");
-foreach($mat as $id=>$oldref){
-    $newref = $oldtonew[$oldref];
-    $db->update_data("mat", "id", $id, array("ref_id"=>$newref,"evidence"=>($newref==2?"Updated:2016-02":"")));
-}
-$trans = $db->get_keypair("transport", "id", "reference");
-foreach($trans as $id=>$oldref){
-    $newref = $oldtonew[$oldref];
-    $db->update_data("transport", "id", $id, array("ref_id"=>$newref,"evidence"=>($newref==2?"Updated:2016-02":"")));
+$arrfid = $db->get_keypair("function_unit", "id", "id", "");
+foreach($arrfid AS $k=>$v){
+    $fid = $v;
+    $info = $db->get_info("function_unit", "id", $fid);
+    $meta = $db->get_meta("fn_meta", "function_unit_id", $fid);
+    $dinfo = json_decode($meta['dis_info'],true);
+    $ninfo = array(
+        "ef" => $dinfo['ef'],
+        "gas" => $dinfo['gas'],
+        "lperkg" => $dinfo['lperkg']
+    );
+    $disv = array();
+    array_push($disv,array(
+        "vehicle" => $dinfo['vehicle'],
+        "amount" => $info['amount'],
+        "distance" => $dinfo['distance'],
+        "go" => $dinfo['goload'],
+        "back" => $dinfo['backload']
+    ));
+    $meta = array(
+        "dis_info" => json_encode($ninfo),
+        "dis_v_info" => json_encode($disv)
+    );
+    $db->update_meta("fn_meta", "function_unit_id", $fid, $meta);
 }
  * 
  */
-

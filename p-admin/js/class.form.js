@@ -756,5 +756,18 @@ function view_schedule(){
             }
         }
     });
-    
+}
+function view_more_section(cl){
+    $(document).ready(function(){
+        var but = $("#view-more-but");
+        var n = $("."+cl).length;
+        but.on("click",function(){
+            var hid = $("."+cl+".form-hide").length;
+            var next = n-hid;
+            $("."+cl).eq(next).removeClass("form-hide");
+            if(next===n){
+                but.hide();
+            }
+        });
+    });
 }

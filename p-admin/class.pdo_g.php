@@ -652,33 +652,6 @@ END_OF_TEXT;
             db_error(__METHOD__, $ex);
         }
     }
-    public function update_mmeta($maid,$meta){
-        try {
-            $stmt0 = $this->conn->prepare("SELECT * FROM machine_meta WHERE machine_id=:maid AND meta_key=:key");
-            $stmt0->bindParam(":maid",$maid);
-            $stmt0->bindParam(":key",$key);
-            $stmt = $this->conn->prepare("UPDATE machine_meta SET meta_value=:val WHERE machine_id=:maid AND meta_key=:key");
-            $stmt->bindParam(":maid",$maid);
-            $stmt->bindParam(":key",$key);
-            $stmt->bindParam(":val",$val);
-            $stmt1 = $this->conn->prepare("INSERT INTO machine_meta VALUES (null,:maid,:key,:val)");
-            $stmt1->bindParam(":maid",$maid);
-            $stmt1->bindParam(":key",$key);
-            $stmt1->bindParam(":val",$val);
-            foreach($meta AS $key=>$val){
-                $stmt0->execute();
-                if($stmt0->rowCount()>0){
-                    //update
-                    $stmt->execute();
-                } else {
-                    //add
-                    $stmt1->execute();
-                }
-            }
-        } catch (Exception $ex) {
-            db_error(__METHOD__, $ex);
-        }
-    }
     public function add_ele($maid,$aname,$awatt,$anum){
         try {
             $stmt = $this->conn->prepare("INSERT INTO electricity VALUES (null,:maid,:name,:watt,:unit)");
@@ -1306,7 +1279,6 @@ END_OF_TEXT;
             db_error(__METHOD__, $ex);
         }
     }
-    
     public function mach_ele_kwh($maid,$hour){
         try {
             $stmt = $this->conn->prepare("SELECT SUM(watt*unit) AS wn FROM electricity WHERE machine_id=:maid");
@@ -1342,14 +1314,18 @@ SELECT mat.name AS material,mat.unit,:amount AS amount,mat.ef,ROUND(mat.ef*:amou
 calculate_type,
 mat2.name AS gas,mat2.ef AS gas_ef,mt.gas_used AS liter_per_kg,
 tr.name,mt.load_come,mt.load_back,distance,trc.ef AS ef_come,trb.ef AS ef_back, 
-IF(calculate_type='gas',ROUND(:amount*mt.gas_used*mat2.ef,5),ROUND((:amount*distance/1000)*(trc.ef+trb.ef/(tr.maxload)),5)) AS transit_carbon
+IF(calculate_type='gas',
+ROUND(:amount*mt.gas_used*mat2.ef,5),
+ROUND((:amount*distance/1000)*(trc.ef*(mt.load_come/(mt.load_come-mt.load_back))+
+IF(mt.load_back>0,trb.ef*mt.load_back/(mt.load_come-mt.load_back),trb.ef/(tr.maxload*mt.load_come/100))
+),5)) AS transit_carbon
 FROM mat
 LEFT JOIN mat_transport AS mt ON mt.mat_id=mat.id
 LEFT JOIN mat AS mat2 ON mat2.id=mt.gas_type
 LEFT JOIN transport as tr ON tr.id=mt.transport_id
 LEFT JOIN transport_ef AS trc ON trc.transport_id=mt.transport_id AND trc.tload=mt.load_come
 LEFT JOIN transport_ef AS trb ON trb.transport_id=mt.transport_id AND trb.tload=mt.load_back
-WHERE mat.id=:mid;
+WHERE mat.id=:mid
 END_OF_TEXT;
             $stmt = $this->conn->prepare($sql);
             $stmt->bindParam(":mid",$mid);

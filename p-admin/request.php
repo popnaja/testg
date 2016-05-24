@@ -391,11 +391,37 @@ if($req == "add_msg"){
         $db->add_ele($maid,$_POST['name'],$_POST['watt'],$_POST['amount']);
         $_SESSION['message'] = "เพิ่มเครื่องจักรสำเร็จ";
     }
+    //go transit
+    if($_POST['go_tid']>0){
+        $go = array(
+            "tid" => $_POST['go_tid'],
+            "dis" => $_POST['go_dis'],
+            "inload" => $_POST['go_inload'],
+            "outload" => $_POST['go_outload']
+        );
+        $meta['go_transit'] = json_encode($go);
+    } else {
+        $meta['go_transit'] = "";
+    }
+    //back transit
+    if($_POST['back_tid']>0){
+        $back = array(
+            "tid" => $_POST['back_tid'],
+            "dis" => $_POST['back_dis'],
+            "inload" => $_POST['back_inload'],
+            "outload" => $_POST['back_outload']
+        );
+        $meta['back_transit'] = json_encode($back);
+    } else {
+        $meta['back_transit'] = "";
+    }
+    
     //machine meta
-    $db->update_mmeta($maid,array("max_defect"=>$_POST['max_defect']));
+    $meta["max_defect"] = $_POST['max_defect'];
+    $db->update_meta("machine_meta", "machine_id", $maid, $meta);
     
+    $_SESSION['message'] = "เพิ่มเครื่องจักรสำเร็จ";
     header("location:".$_POST['redirect']);
-    
 } else if($req == "edit_machine"){
     //edit machine
     $db->edit_machine($_POST['maid'],$_POST['brand'], $_POST['process'], $_POST['unit'],$_POST['mcat']);
@@ -405,8 +431,34 @@ if($req == "add_msg"){
     }
     //add new electricity
     $db->add_ele($_POST['maid'],$_POST['nname'],$_POST['nwatt'],$_POST['namount']);
+    //go transit
+    if($_POST['go_tid']>0){
+        $go = array(
+            "tid" => $_POST['go_tid'],
+            "dis" => $_POST['go_dis'],
+            "inload" => $_POST['go_inload'],
+            "outload" => $_POST['go_outload']
+        );
+        $meta['go_transit'] = json_encode($go);
+    } else {
+        $meta['go_transit'] = "";
+    }
+    //back transit
+    if($_POST['back_tid']>0){
+        $back = array(
+            "tid" => $_POST['back_tid'],
+            "dis" => $_POST['back_dis'],
+            "inload" => $_POST['back_inload'],
+            "outload" => $_POST['back_outload']
+        );
+        $meta['back_transit'] = json_encode($back);
+    } else {
+        $meta['back_transit'] = "";
+    }
+    
     //machine meta
-    $db->update_mmeta($_POST['maid'],array("max_defect"=>$_POST['max_defect']));
+    $meta["max_defect"] = $_POST['max_defect'];
+    $db->update_meta("machine_meta", "machine_id", $_POST['maid'], $meta);
     
     $_SESSION['message'] = "แก้ไขเครื่องจักรสำเร็จ";
     header("location:".$_POST['redirect']);
@@ -492,13 +544,25 @@ if($req == "add_msg"){
             "ef"=>$_POST['dis_ef'],
             "gas" => $_POST['dis_gas_type'],
             "lperkg" => $_POST['dis_gas_lperkg'],
-            "vehicle" => $_POST['dis_v_type'],
-            "distance" => $_POST['dis_v_distance'],
-            "goload" => $_POST['dis_v_goload'],
-            "backload" => $_POST['dis_v_backload']
             )),
         "design" => $_POST['design']
     );
+    //several distribute
+    if($_POST['dis_type']=="cal-vehicle"){
+        $disv = array();
+        for($i=0;$i<count($_POST['vamount']);$i++){
+            if($_POST['vamount'][$i]>0){
+                array_push($disv,array(
+                    "vehicle" => $_POST['vtype'][$i],
+                    "amount" => $_POST['vamount'][$i],
+                    "distance" => $_POST['vdis'][$i],
+                    "go" => $_POST['vgoload'][$i],
+                    "back" => $_POST['vbackload'][$i]
+                ));
+            }
+        }
+        $meta['dis_v_info'] = json_encode($disv);
+    }
     if($_POST['coid']==1){
         $meta['sub_comp'] = $_POST['sub_comp'];
     }
@@ -533,13 +597,25 @@ if($req == "add_msg"){
             "ef"=>$_POST['dis_ef'],
             "gas" => $_POST['dis_gas_type'],
             "lperkg" => $_POST['dis_gas_lperkg'],
-            "vehicle" => $_POST['dis_v_type'],
-            "distance" => $_POST['dis_v_distance'],
-            "goload" => $_POST['dis_v_goload'],
-            "backload" => $_POST['dis_v_backload']
             )),
         "design" => $_POST['design']
     );
+    //several distribute
+    if($_POST['dis_type']=="cal-vehicle"){
+        $disv = array();
+        for($i=0;$i<count($_POST['vamount']);$i++){
+            if($_POST['vamount'][$i]>0){
+                array_push($disv,array(
+                    "vehicle" => $_POST['vtype'][$i],
+                    "amount" => $_POST['vamount'][$i],
+                    "distance" => $_POST['vdis'][$i],
+                    "go" => $_POST['vgoload'][$i],
+                    "back" => $_POST['vbackload'][$i]
+                ));
+            }
+        }
+        $meta['dis_v_info'] = json_encode($disv);
+    }
     if($_POST['coid']==1){
         $meta['sub_comp'] = $_POST['sub_comp'];
     }

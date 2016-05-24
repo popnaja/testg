@@ -33,11 +33,34 @@ $content .= $menu->showpanel("เครื่องจักร","");
 $action = filter_input(INPUT_GET,'action',FILTER_SANITIZE_STRING);
 $maid = filter_input(INPUT_GET,'maid',FILTER_SANITIZE_NUMBER_INT);
 $mgroup = "('printing','finishing')";
+$form = new myform('myform','cheight');
+$vehicle = ["0"=>"--พาหนะ--"]+$db->get_vehicle();
+$load = [0=>0,50=>50,75=>75,100=>100];
 
 if($action == "add"){
     $mcat = $db->get_mcat($mgroup);
+    //elect
+    $elect = "";
+    for($i=0;$i<5;$i++){
+        $elect .= $form->show_text("name_$i","name[]","","",($i==0?"อุปกรณ์":""),"","left-33 label-inline")
+                . $form->show_num("watt_$i","",0.001,"",($i==0?"กินไฟ(วัตต์)":""),"","left-33 label-inline","","watt[]")
+                . $form->show_num("amount_$i","",0.01,"",($i==0?"จำนวน":""),"","left-33 label-inline","","amount[]");
+    }
+    //transit
+    $transit = "<div class='tab-section cheight'>"
+            . "<h4>การขนส่งขาไป (นำชิ้นงานไปผลิต)</h4>"
+            . $form->show_select("go_tid", $vehicle, "label-3070","พาหนะ")
+            . $form->show_num("go_dis","",0.01,"","ระยะทาง (กม)","","label-3070")
+            . $form->show_select("go_inload", $load, "label-3070","บรรทุกขาไป(%)")
+            . $form->show_select("go_outload", $load, "label-3070","บรรทุกขากลับ(%)")
+            . "</div><div class='tab-section cheight'>"
+            . "<h4>การขนส่งขากลับ (นำชิ้นงานสำเร็จกลับ)</h4>"
+            . $form->show_select("back_tid", $vehicle, "label-3070","พาหนะ")
+            . $form->show_num("back_dis","",0.01,"","ระยะทาง (กม)","","label-3070")
+            . $form->show_select("back_inload", $load, "label-3070","บรรทุกขาไป(%)")
+            . $form->show_select("back_outload", $load, "label-3070","บรรทุกขากลับ(%)")
+            . "</div>";
     //add
-    $form = new myform('new','cheight');
     $content .= "<h1 class='page-title'>เพิ่มเครื่องจักร</h1>"
             . "<div id='ez-msg'>".  showmsg() ."</div>"
             . $form->show_st_form()
@@ -52,13 +75,8 @@ if($action == "add"){
             . "</div><!-- .col-50 -->";
     
     $content .= "<div class='col-50'>"
-            . "<h3 class='section-title'>อุปกรณ์อำนวยความสะดวก</h3>";
-    for($i=0;$i<5;$i++){
-        $content .= $form->show_text("name_$i","name[]","","",($i==0?"อุปกรณ์":""),"","left-33 label-inline")
-                . $form->show_num("watt_$i","",0.001,"",($i==0?"กินไฟ(วัตต์)":""),"","left-33 label-inline","","watt[]")
-                . $form->show_num("amount_$i","",0.01,"",($i==0?"จำนวน":""),"","left-33 label-inline","","amount[]");
-    }
-    $content .= "</div><!-- .col-50 -->";
+            . $form->show_tabs(array("อุปกรณ์","การขนส่ง"), array($elect,$transit), 0)
+            . "</div><!-- .col-50 -->";
     
     $content .= $form->show_submit("submit","Add New","but-right")
             . $form->show_hidden("request","request","add_machine")
@@ -66,7 +84,7 @@ if($action == "add"){
             . $form->show_hidden("redirect","redirect",$root."machine.php")
             . "</div><!-- .col-100 -->";
     $form->addformvalidate("ez-msg", array('brand','process','unit'));
-    $content .= $form->submitscript("$('#new').submit();")
+    $content .= $form->submitscript("$('#myform').submit();")
             . "<script>"
             . "defect_unit();"
             . "</script>";
@@ -79,8 +97,54 @@ if($action == "add"){
     $maxd = (isset($mmeta['max_defect'])?$mmeta['max_defect']:"");
     $ele = $db->view_ele($maid);
     $ele_no = sizeof($ele,0);
+    //elect
+    $elect = "";
+    for($i=0;$i<$ele_no;$i++){
+        $elect .= $form->show_text("name_$i","name[]",$ele[$i]['name'],"",($i==0?"อุปกรณ์":""),"","left-33 label-inline")
+                . $form->show_num("watt_$i",$ele[$i]['watt'],0.001,"",($i==0?"กินไฟ(วัตต์)":""),"","left-33 label-inline","","watt[]")
+                . $form->show_num("amount_$i",$ele[$i]['unit'],0.01,"",($i==0?"จำนวน":""),"","left-33 label-inline","","amount[]")
+                . $form->show_hidden("eid_$i","eid[]",$ele[$i]['id']);
+    }
+    for($i=0;$i<5;$i++){
+        $elect .= $form->show_text("nname_$i","nname[]","","",($i==0?"อุปกรณ์":""),"","left-33 label-inline")
+                . $form->show_num("nwatt_$i","",0.001,"",($i==0?"กินไฟ(วัตต์)":""),"","left-33 label-inline","","nwatt[]")
+                . $form->show_num("namount_$i","",0.01,"",($i==0?"จำนวน":""),"","left-33 label-inline","","namount[]");
+    }
+    //transit
+    if(isset($mmeta['go_transit'])&&$mmeta['go_transit']!=""){
+        $go = json_decode($mmeta['go_transit'],true);
+    } else {
+        $go = array(
+            "tid" => 0,
+            "dis" => "",
+            "inload" => 0,
+            "outload" => 0
+        );
+    }
+    if(isset($mmeta['back_transit'])&&$mmeta['back_transit']!=""){
+        $back = json_decode($mmeta['back_transit'],true);
+    } else {
+        $back = array(
+            "tid" => 0,
+            "dis" => "",
+            "inload" => 0,
+            "outload" => 0
+        );
+    }
+    $transit = "<div class='tab-section cheight'>"
+            . "<h4>การขนส่งขาไป (นำชิ้นงานไปผลิต)</h4>"
+            . $form->show_select("go_tid", $vehicle, "label-3070","พาหนะ",$go['tid'])
+            . $form->show_num("go_dis",$go['dis'],0.01,"","ระยะทาง (กม)","","label-3070")
+            . $form->show_select("go_inload", $load, "label-3070","บรรทุกขาไป(%)",$go['inload'])
+            . $form->show_select("go_outload", $load, "label-3070","บรรทุกขากลับ(%)",$go['outload'])
+            . "</div><div class='tab-section cheight'>"
+            . "<h4>การขนส่งขากลับ (นำชิ้นงานสำเร็จกลับ)</h4>"
+            . $form->show_select("back_tid", $vehicle, "label-3070","พาหนะ",$back['tid'])
+            . $form->show_num("back_dis",$back['dis'],0.01,"","ระยะทาง (กม)","","label-3070")
+            . $form->show_select("back_inload", $load, "label-3070","บรรทุกขาไป(%)",$back['inload'])
+            . $form->show_select("back_outload", $load, "label-3070","บรรทุกขากลับ(%)",$back['outload'])
+            . "</div>";
     //edit
-    $form = new myform('edit','cheight');
     $content .= "<h1 class='page-title'>แก้ไขเครื่องจักร</h1>"
             . "<div id='ez-msg'>".  showmsg() ."</div>"
             . $form->show_st_form()
@@ -95,19 +159,8 @@ if($action == "add"){
             . "</div><!-- .col-50 -->";
 
     $content .= "<div class='col-50'>"
-            . "<h3 class='section-title'>สิ่งอำนวยความสะดวก</h3>";
-    for($i=0;$i<$ele_no;$i++){
-        $content .= $form->show_text("name_$i","name[]",$ele[$i]['name'],"",($i==0?"อุปกรณ์":""),"","left-33 label-inline")
-                . $form->show_num("watt_$i",$ele[$i]['watt'],0.001,"",($i==0?"กินไฟ(วัตต์)":""),"","left-33 label-inline","","watt[]")
-                . $form->show_num("amount_$i",$ele[$i]['unit'],0.01,"",($i==0?"จำนวน":""),"","left-33 label-inline","","amount[]")
-                . $form->show_hidden("eid_$i","eid[]",$ele[$i]['id']);
-    }
-    for($i=0;$i<5;$i++){
-        $content .= $form->show_text("nname_$i","nname[]","","",($i==0?"อุปกรณ์":""),"","left-33 label-inline")
-                . $form->show_num("nwatt_$i","",0.001,"",($i==0?"กินไฟ(วัตต์)":""),"","left-33 label-inline","","nwatt[]")
-                . $form->show_num("namount_$i","",0.01,"",($i==0?"จำนวน":""),"","left-33 label-inline","","namount[]");
-    }
-    $content .= "</div><!-- .col-50 -->";
+            . $form->show_tabs(array("อุปกรณ์","การขนส่ง"), array($elect,$transit), 0)
+            . "</div><!-- .col-50 -->";
     
     //del machine
     if($_SESSION['rms_l']>1){
@@ -126,7 +179,7 @@ if($action == "add"){
             . $form->show_hidden("redirect","redirect",$root."machine.php")
             . "</div><!-- .col-100 -->";
     $form->addformvalidate("ez-msg", array('brand','process','unit'));
-    $content .= $form->submitscript("$('#edit').submit();")
+    $content .= $form->submitscript("$('#myform').submit();")
             . "<script>"
             . "defect_unit();"
             . "</script>";
