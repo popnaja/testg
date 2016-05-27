@@ -18,6 +18,9 @@
 .full-report td {
     text-align:right;
 }
+.full-report th:nth-child(2){
+    width:2in;
+}
 .row-color {
     background-color:#dfeffc;
 }
